@@ -10,14 +10,7 @@ contest_handler = Blueprint(
 @contest_handler.route('')
 def show_all():
     contests = Contest.query.all()
-    json_contests = [{'title': c.title,
-                      'user': c.user_id,
-                      'contestid': c.id,
-                      'description': c.description,
-                      'prize': c.prize,
-                      'deadline': c.deadline,
-                      'date_created': c.date_created} for c in contests]
-    return jsonify(json_contests)
+    return jsonify([contest.to_dict() for contest in contests])
 
 # view for creating a new contest, could potentially be combined with show_all()
 @contest_handler.route('/new')
@@ -39,7 +32,8 @@ def create():
     date_created = datetime.now()
 
     contest = Contest(title=title, description=description,
-                      prize=prize, deadline=deadline, date_created=date_created, user_id=user_id)
+                      prize=prize, deadline=deadline, 
+                      date_created=date_created, user_id=user_id)
     db.session.add(contest)
     db.session.commit()
     return redirect(f'/contests/{contest.id}')
@@ -47,44 +41,30 @@ def create():
 
 @contest_handler.route('/<int:id>')
 def show_contest(id):
-    c = Contest.query.get(id)
-    json_contest = {'title': c.title,
-                    'user': c.user_id,
-                    'contestid': c.id,
-                    'description': c.description,
-                    'prize': c.prize,
-                    'deadline': c.deadline,
-                    'date_created': c.date_created}
-    return jsonify(json_contest)
+    contest = Contest.query.get(id)
+    return jsonify(contest.to_dict())
 
 # dedicated page for editing a contest, could potentially be combined with show_contest()
 @contest_handler.route('/<int:id>/edit')
 def edit(id):
-    c = Contest.query.get(id)
-    json_contest = {'title': c.title,
-                    'user': c.user_id,
-                    'contestid': c.id,
-                    'description': c.description,
-                    'prize': c.prize,
-                    'deadline': c.deadline,
-                    'date_created': c.date_created}
-    return jsonify('Show form for editing this contest', json_contest)
+    contest = Contest.query.get(id)
+    return jsonify('Show form for editing this contest', contest.to_dict())
 
 
 @contest_handler.route('/<int:id>', methods=['POST', 'PATCH', 'PUT'])
 def update(id):
-    c = Contest.query.get(id)
+    contest = Contest.query.get(id)
     input_data = request.json
     # may be a better way to do this than setattr
     for key in input_data.keys():
-        setattr(c, key, input_data[key])
+        setattr(contest, key, input_data[key])
     db.session.commit()
     return redirect(f'/contests/{id}')
 
 
 @contest_handler.route('/<int:id>', methods=['DELETE'])
 def delete(id):
-    c = Contest.query.get(id)
-    db.session.delete(c)
+    contest = Contest.query.get(id)
+    db.session.delete(contest)
     db.session.commit()
     return redirect(url_for('show_all'))

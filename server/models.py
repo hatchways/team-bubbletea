@@ -34,6 +34,15 @@ class Contest(db.Model):
     def __repr__(self):
         return f'Contest {self.id}, Title: {self.title}'
 
+    def to_dict(self):
+        return {'title': self.title,
+                'user': self.user_id,
+                'contestid': self.id,
+                'description': self.description,
+                'prize': self.prize,
+                'deadline': self.deadline,
+                'date_created': self.date_created}
+
     # example validation making sure deadline for contest is
     #   within the next year, need to decide on what to validate
     #   for both models
