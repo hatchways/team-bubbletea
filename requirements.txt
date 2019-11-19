@@ -1,3 +1,5 @@
 Flask-SQLAlchemy
 Flask-Migrate
 psycopg2
+Boto3
+Flask-bootstrap 
