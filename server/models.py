@@ -8,9 +8,8 @@ class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
-
-    def __init__(self, id):
-        self.id = id
+    contests = db.Relationship('Contest', backref='owner', lazy=True)
+    submissions = db.Relationship('Submission', backref='artist', lazy=True)
 
     def __repr__(self):
         return f'User number {self.id}'
@@ -30,6 +29,7 @@ class Contest(db.Model):
     deadline = db.Column(db.DateTime, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    submissions = db.Relationship('Submission', backref='contest', lazy=True)
 
     def __repr__(self):
         return f'Contest {self.id}, Title: {self.title}'

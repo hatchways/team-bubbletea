@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, redirect
+from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
 from models import Contest
 from datetime import datetime
@@ -87,4 +87,4 @@ def delete(id):
     c = Contest.query.get(id)
     db.session.delete(c)
     db.session.commit()
-    return redirect('/contests')
+    return redirect(url_for('show_all'))
