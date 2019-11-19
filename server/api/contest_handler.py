@@ -36,7 +36,7 @@ def create():
                       date_created=date_created, user_id=user_id)
     db.session.add(contest)
     db.session.commit()
-    return redirect(f'/contests/{contest.id}')
+    return redirect(url_for('contest_handler.show_contest', id = contest.id))
 
 
 @contest_handler.route('/<int:id>')
@@ -59,7 +59,7 @@ def update(id):
     for key in input_data.keys():
         setattr(contest, key, input_data[key])
     db.session.commit()
-    return redirect(f'/contests/{id}')
+    return redirect(url_for('contest_handler.show_contest', id = id))
 
 
 @contest_handler.route('/<int:id>', methods=['DELETE'])
@@ -67,4 +67,4 @@ def delete(id):
     contest = Contest.query.get(id)
     db.session.delete(contest)
     db.session.commit()
-    return redirect(url_for('show_all'))
+    return redirect(url_for('contest_handler.show_all'))
