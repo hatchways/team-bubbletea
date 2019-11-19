@@ -25,9 +25,9 @@ class Contest(db.Model):
     description = db.Column(db.Text)
 
     # need to decide which fields should allow null values
-    prize = db.Column(db.Float, nullable=False)
+    prize = db.Column(db.Float, nullable=False, default=0.0)
     deadline = db.Column(db.DateTime, nullable=False)
-    date_created = db.Column(db.DateTime, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     submissions = db.relationship('Submission', backref='contest', lazy=True)
 
@@ -41,7 +41,8 @@ class Contest(db.Model):
                 'description': self.description,
                 'prize': self.prize,
                 'deadline': self.deadline,
-                'date_created': self.date_created}
+                'date_created': self.date_created,
+                'submissions': self.submissions}
 
     # example validation making sure deadline for contest is
     #   within the next year, need to decide on what to validate

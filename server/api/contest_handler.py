@@ -29,11 +29,9 @@ def create():
     description = input_data['description']
     prize = input_data['prize']
     deadline = datetime.strptime(input_data['deadline'], "%m/%d/%Y, %H:%M:%S")
-    date_created = datetime.now()
 
     contest = Contest(title=title, description=description,
-                      prize=prize, deadline=deadline, 
-                      date_created=date_created, user_id=user_id)
+                      prize=prize, deadline=deadline, user_id=user_id)
     db.session.add(contest)
     db.session.commit()
     return redirect(url_for('contest_handler.show_contest', id = contest.id))

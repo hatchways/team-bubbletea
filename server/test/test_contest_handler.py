@@ -12,7 +12,7 @@ class ContestHandlerTest(TestBase):
         input_data = {'title': 'lion'+str(random.randint(0, 10000000)),
                       'description': 'any old lion tattoo',
                       'prize': 27.50,
-                      'deadline': datetime(2021, 1, 1, 1, 1).strftime("%m/%d/%Y, %H:%M:%S")}
+                      'deadline': datetime(2019, 12, 12, 12, 12).strftime("%m/%d/%Y, %H:%M:%S")}
 
         self.api.post('/contests', data=json.dumps(input_data),
                       content_type='application/json')
