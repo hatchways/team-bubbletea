@@ -2,6 +2,7 @@ from flask import Flask
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.contest_handler import contest_handler
+from api.submission_handler import submission_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
 from database import db
 
@@ -11,4 +12,6 @@ db.init_app(app)
 
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
-app.register_blueprint(contest_handler)
+app.register_blueprint(contest_handler, url_prefix="/contests")
+app.register_blueprint(
+    submission_handler, url_prefix="/contests/<int:contest_id>/submissions")
