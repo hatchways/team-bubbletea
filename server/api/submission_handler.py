@@ -23,7 +23,7 @@ def create(contest_id):
     user_id = 1
 
     submission = Submission(
-        user_id=user_id, contest_id=contest_id, image='No Image')
+        user_id=user_id, contest_id=contest_id, image=request.json['image'])
 
     db.session.add(submission)
     db.session.commit()

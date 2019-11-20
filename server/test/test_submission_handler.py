@@ -7,7 +7,7 @@ import random
 class SubmissionHandlerTest(TestBase):
     # manual test for now
     def test_create_submission(self):
-        input_data = {'user_id': 1, 'contest_id': 3}
+        input_data = {'user_id': 1, 'contest_id': 3, 'image': 'No Image'}
 
         self.api.post(f'/contests/{input_data["contest_id"]}/submissions',
                       data=json.dumps(input_data), content_type='application/json')
