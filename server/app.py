@@ -28,30 +28,31 @@ with open('sample_users.json') as sample_users:
 # ***** Needs to be changed once actual db is set up *****
 def authenticate(email, password):
     filtered_users = [x for x in users if (x['email'] == email)]
-
-    if not filtered_users: # no email match
+    if not filtered_users:
         return False
-    else:
-        if filtered_users[0]['password'] == password:
-            return True
-        else:
-            return False
+
+    return filtered_users[0]['password'] == password
 
 
 # Decode JWT token and return email, secret key to another variable later
 def decode(encoded):
     decoded = jwt.decode(encoded, 'secret', algorithm='HS256')
+    
     return decoded['sub']
 
 
 # Routes
 @app.route('/home')
 def home():
+
+    logged_in = False
+
     if 'token' in session:
         decoded = decode(session['token'])
-        return render_template('home.html', logged_in=True, email=decoded)
-    else:
-        return render_template('home.html', logged_in=False)
+        logged_in = True
+
+    return render_template('home.html', logged_in=logged_in, email=decoded)
+
 
 
 @app.route('/login', methods=['POST', 'GET'])
