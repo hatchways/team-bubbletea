@@ -42,6 +42,10 @@ class LandingPage extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.landingContainer}>
+        {localStorage.getItem('token') ? 
+        (<p>You are logged in with token {localStorage.getItem('token')} </p>) : 
+        (<p>You are not logged in!</p>)
+        }
         <Typography>{this.state.welcomeMessage}</Typography>
         {this.state.step >= 1 && (
           <React.Fragment>

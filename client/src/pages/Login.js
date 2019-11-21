@@ -35,7 +35,7 @@ class Login extends Component {
       .then(response => {
         if (response.token) {
           localStorage.setItem('token', response.token)
-          window.location.reload()
+          this.props.history.push('/') // Redirect to home page
         } else {
           this.setState({ error: response.error });
         }
