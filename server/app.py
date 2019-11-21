@@ -55,25 +55,24 @@ def home():
 
 
 
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST'])
 def login():
 
     error = ''
 
-    if request.method == 'POST':
-        if authenticate(request.form['email'], request.form['password']):
-            token = jwt.encode(
-                {
-                    'sub': request.form['email'],
-                    'iat': datetime.datetime.utcnow(),
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
-                },
-                'secret', algorithm='HS256' # Change secret key in config.py later
-            )
-            session['token'] = token
-            return redirect(url_for('home'))
+    user = request.get_json()
 
-        else:
-            error = 'Invalid credentials'
+    if authenticate(user['email'], user['password']):
+        token = jwt.encode(
+            {
+                'sub': user['email'],
+                'iat': datetime.datetime.utcnow(),
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
+            },
+            'secret', algorithm='HS256' # Change secret key in config.py later
+        )
+        return jsonify(token=token.decode('utf-8'), error=error)
+    else:
+        error = 'Invalid credentials'
 
-    return render_template('login.html', error=error)
+    return jsonify(error=error)
