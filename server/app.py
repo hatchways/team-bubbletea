@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from flask_cors import CORS
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +9,7 @@ import json
 import datetime
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_URL}/{POSTGRES_DATABASE}'
 db = SQLAlchemy(app)
 
@@ -60,7 +62,7 @@ def login():
 
     error = ''
 
-    user = request.get_json()
+    user = request.get_json(force=True)
 
     if authenticate(user['email'], user['password']):
         token = jwt.encode(
