@@ -62,7 +62,7 @@ def login():
 
     error = ''
 
-    user = request.get_json(force=True)
+    user = request.get_json()
 
     if authenticate(user['email'], user['password']):
         token = jwt.encode(
