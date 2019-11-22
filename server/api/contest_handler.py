@@ -4,7 +4,7 @@ from models import Contest
 from datetime import datetime
 
 contest_handler = Blueprint(
-    'contest_handler', __name__, url_prefix='/contests')
+    'contest_handler', __name__)
 
 
 @contest_handler.route('')
@@ -20,21 +20,19 @@ def new():
 
 @contest_handler.route('', methods=['POST'])
 def create():
-    input_data = request.json
-
     # just using a dummy user for now, need to create user with id=1 in postgres for this to work
     user_id = 1
 
-    title = input_data['title']
-    description = input_data['description']
-    prize = input_data['prize']
-    deadline = datetime.strptime(input_data['deadline'], "%m/%d/%Y, %H:%M:%S")
+    contest = Contest(title=request.json['title'],
+                      description=request.json['description'],
+                      prize=request.json['prize'],
+                      deadline=datetime.strptime(
+                          request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
+                      user_id=user_id)
 
-    contest = Contest(title=title, description=description,
-                      prize=prize, deadline=deadline, user_id=user_id)
     db.session.add(contest)
     db.session.commit()
-    return redirect(url_for('contest_handler.show_contest', id = contest.id))
+    return redirect(url_for('contest_handler.show_contest', id=contest.id))
 
 
 @contest_handler.route('/<int:id>')
@@ -52,12 +50,11 @@ def edit(id):
 @contest_handler.route('/<int:id>', methods=['PATCH', 'PUT'])
 def update(id):
     contest = Contest.query.get_or_404(id)
-    input_data = request.json
     # may be a better way to do this than setattr
-    for key in input_data.keys():
-        setattr(contest, key, input_data[key])
+    for key in request.json.keys():
+        setattr(contest, key, request.json[key])
     db.session.commit()
-    return redirect(url_for('contest_handler.show_contest', id = id))
+    return redirect(url_for('contest_handler.show_contest', id=id))
 
 
 @contest_handler.route('/<int:id>', methods=['DELETE'])
