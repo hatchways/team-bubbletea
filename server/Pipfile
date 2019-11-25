@@ -7,6 +7,10 @@ verify_ssl = true
 
 [packages]
 flask = "*"
+Flask-SQLAlchemy = "*"
+Flask-Migrate = "*"
+psycopg2 = "*"
+Flask-Script = "*"
 
 [requires]
 python_version = "3.7"
