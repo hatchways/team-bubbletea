@@ -1,4 +1,10 @@
 import React, { Component } from "react";
+import { Header } from "./Header";
+import { SignUpButton } from "./SignUpButton";
+import { SignInPaper } from "./SignInPaper";
+import { BasicTextField } from "./TextField";
+import { SignInButton } from "./SignInButton";
+import { Grid, Typography } from "@material-ui/core";
 
 class Login extends Component {
   constructor(props) {
@@ -58,22 +64,35 @@ class Login extends Component {
   render() {
     return (
       <div>
-        <form onSubmit={this.handleFormSubmit}>
-          <input
-            type="email"
-            value={this.state.email}
-            onChange={e => this.handleEmailChange(e.target.value)}
-          />
-          <input
-            type="password"
-            value={this.state.password}
-            onChange={e => this.handlePasswordChange(e.target.value)}
-          />
-          <button type="submit">Log in</button>
-        </form>
-        <p>{this.state.error}</p>
-        <p>Token: {localStorage.getItem('token')}</p>
-        <button type="button" onClick={this.handleLogout}>Log out</button>
+      <Header>
+      <SignUpButton/>
+      </Header>
+      <SignInPaper>
+        <Grid container direction="column" alignContent="center">
+          <form onSubmit={this.handleFormSubmit}>
+              <BasicTextField
+                label="Email Address"
+                value={this.state.email}
+                onChange={e => this.handleEmailChange(e.target.value)}
+              />
+              <BasicTextField
+                type="password"
+                label="Password"
+                value={this.state.password}
+                onChange={e => this.handlePasswordChange(e.target.value)}
+              />
+            <Grid item>
+              <Typography variant="caption" color="primary">
+                <a href=""> 
+                  Forgot Your Password?
+                </a>
+              </Typography>
+            </Grid>
+              <SignInButton type="submit"/>
+          </form>
+          <p>{this.state.error}</p>
+        </Grid>
+      </SignInPaper>
       </div>
     )
   }
