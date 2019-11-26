@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_cors import CORS
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
-from flask_sqlalchemy import SQLAlchemy
+from api.contest_handler import contest_handler
+from api.submission_handler import submission_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
 import jwt
 import json
@@ -11,7 +12,7 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_URL}/{POSTGRES_DATABASE}'
-db = SQLAlchemy(app)
+db.init_app(app)
 
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
