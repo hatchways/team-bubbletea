@@ -10,6 +10,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     contests = db.relationship('Contest', backref='owner', lazy=True)
     submissions = db.relationship('Submission', backref='artist', lazy=True)
+    stripe_transfer_id = db.Column(db.String)
+    stripe_customer_id = db.Column(db.String)
 
     def __repr__(self):
         return f'User number {self.id}'
