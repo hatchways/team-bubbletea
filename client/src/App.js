@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { theme } from "./themes/theme";
 import LandingPage from "./pages/Landing";
 import Login from "./pages/Login";
+import { UploadSubmission } from './pages/UploadSubmission';
 
 import "./App.css";
 
@@ -15,6 +16,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
+          <Route path="/upload-submission" component={UploadSubmission} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>

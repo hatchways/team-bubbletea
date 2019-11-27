@@ -11,22 +11,22 @@ const useStyles = makeStyles(theme => ({
   	"border-radius": "0",
   },
   buttonContainer: {
-  	"width": "40%",
-  	"margin-left": "30%", 
-  	"margin-top" : "10%"
+  	"width": "10%",
+  	"margin-left": "45%", 
+  	"margin-top" : "2%"
   }
 }));
 
-export function SignInButton(props) {
+export function UploadButton(props) {
   const classes = useStyles();
 
   return (
     <div>
     <Grid item>
     	<div className={classes.buttonContainer}>
-      	<Button type={props.type} fullWidth className={classes.button} variant="contained">
+      	<Button onClick={props.onClick} type={props.type} fullWidth className={classes.button} variant="contained">
       		<Typography className={classes.root}>
-      			Sign In
+      			Submit
       		</Typography>
       	</Button>
       </div>
