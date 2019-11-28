@@ -3,3 +3,5 @@ Flask-SQLAlchemy
 Flask-Migrate
 psycopg2
 PyJWT
+Boto3
+uuid

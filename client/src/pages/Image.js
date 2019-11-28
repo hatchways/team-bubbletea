@@ -7,7 +7,7 @@ export class Image extends React.Component {
 	}
 
 	handleClickDownloadImage() {
-		fetch('/download', {
+		fetch('contests/2/submissions/download', {
 			method: 'POST', 
 			body: JSON.stringify({"key" : this.props.imageKey}),
 			headers: {"Content-Type" : "application/json"}

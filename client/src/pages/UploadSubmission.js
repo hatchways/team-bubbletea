@@ -24,24 +24,23 @@ export class UploadSubmission extends React.Component {
     }
 
     handleClickUpload(e) {
-        console.log("hello")
         if(this.state.files !== null) {
             e.preventDefault();
             const formData = new FormData();
             formData.append('file', this.state.files[0]);
-            fetch('/upload', {
+            fetch('/contests/2/submissions/upload', {
                 method:'POST', 
                 body: formData
             })
             .then(response => {
-                console.log("Yay! Your file has been successfully uploaded" + response)
-                // redirect back to the contest page that 
+                console.log(response)
+                // redirect back to the contest page that the submission was for
             })
             .catch(error => {
-                console.log("Uh-oh, something's not right..." + error)
+                console.log(error)
             })
         } else {
-            // add MUI popup here 
+            // TODO add MUI popup here 
             alert("Please select a file to upload first!")
         }
     }

@@ -1,34 +1,51 @@
-from flask import Blueprint, jsonify, request, redirect, url_for
+import boto3
+import uuid
+from flask import Blueprint, jsonify, request, redirect, url_for, Response
 from database import db
+from config import S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_REGION
 from models import User, Submission, Contest
 from datetime import datetime
 
 submission_handler = Blueprint('submission_handler', __name__)
 
+s3 = boto3.client(
+    's3', 
+    region_name = S3_BUCKET_REGION, 
+    aws_access_key_id=S3_ACCESS_KEY_ID, 
+    aws_secret_access_key=S3_SECRET_ACCESS_KEY, 
+    config=boto3.session.Config(signature_version='s3v4')
+)
 
-@submission_handler.route('')
+@submission_handler.route('/')
 def show_all(contest_id):
     submissions = Submission.query.filter_by(contest_id=contest_id).all()
-    return jsonify([submission.to_dict() for submission in submissions])
 
-# view for creating a new contest, could potentially be combined with show_all()
-@submission_handler.route('/new')
-def new(contest_id):
-    return jsonify('Show form allowing us to create new submission')
+    submissionsURLs = []
+    submissionKeys = []
+    for submission in submissions: 
+        signedURL = s3.generate_presigned_url('get_object', Params={'Bucket': S3_BUCKET, 'Key': submission.image}, ExpiresIn=1000)
+        submissionKeys.append(submission.image)
+        submissionsURLs.append(signedURL)
 
+    return jsonify({ "files" : submissionsURLs, "fileKeys" : submissionKeys })
 
-@submission_handler.route('', methods=['POST'])
-def create(contest_id):
-    # just using a dummy user for now, need to create user with id=1 in postgres for this to work
-    user_id = 1
+@submission_handler.route('/upload', methods=['POST'])
+def upload(contest_id):
+    file = request.files['file']
+    user_id=1
+
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    file_key = str(uuid.uuid1()) + file.filename
+    my_bucket.Object(file_key).put(Body=file)
 
     submission = Submission(
-        user_id=user_id, contest_id=contest_id, image=request.json['image'])
-
+         user_id=user_id, contest_id=contest_id, image=file_key)
+    
     db.session.add(submission)
     db.session.commit()
-    return redirect(url_for('submission_handler.show_submission', contest_id=contest_id, submission_id=submission.id))
 
+    return jsonify({ "success" : "true" })
 
 @submission_handler.route('/<int:submission_id>')
 def show_submission(contest_id, submission_id):
@@ -58,3 +75,18 @@ def delete(contest_id, submission_id):
     db.session.delete(submission)
     db.session.commit()
     return redirect(url_for('submission_handler.show_all', contest_id=contest_id))
+
+@submission_handler.route('/download', methods=['POST'])
+def download(contest_id):
+	key = request.json['key']
+
+	s3_resource = boto3.resource('s3')
+	my_bucket = s3_resource.Bucket(S3_BUCKET)
+
+	file_obj = my_bucket.Object(key).get()
+
+	return Response(
+		file_obj['Body'].read(),
+		mimetype='image/png', 
+		headers={"Content-Type" : "image/png", "Content-Disposition" : "attachment;filename={}".format(key)}
+	)
