@@ -3,6 +3,7 @@ from database import db
 from models import User
 from datetime import datetime
 from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_CLIENT_ID_TEST
+from uuid import uuid4
 import stripe
 
 stripe.api_key = STRIPE_SECRET_KEY_TEST
@@ -23,7 +24,7 @@ def home(user_id):
                   f'suggested_capabilities[]=transfers')
 
     intent = stripe.SetupIntent.create()
-    return jsonify({'clientSecret': intent.client_secret, 'OauthLink': Oauth_link})
+    return jsonify({'client_secret': intent.client_secret, 'Oauth_link': Oauth_link})
 
 
 # user adds deposit info so he/she can receive payment upon winning contest
@@ -39,20 +40,22 @@ def setup_transfer_details(user_id):
 
     user.stripe_transfer_id = response.stripe_user_id
     db.session.commit()
+    return jsonify({})
 
 
 # user adds credit card info to make payments whenever he/she creates a contest
 # figure out intent.payment_method
-@payment_handler.route('/cc/setup')
+@payment_handler.route('/cc/setup', methods=['POST'])
 def setup_cc_details(user_id):
     user = User.query.get_or_404(user_id)
 
-    stripe_customer_id = stripe.Customer.create(
+    customer = stripe.Customer.create(
         payment_method=request.json['payment_method_id']
     )
 
-    user.stripe_customer_id = stripe_customer_id
+    user.stripe_customer_id = customer["id"]
     db.session.commit()
+    return jsonify({'Success': 'Credit card added'})
 
 # artist updates deposit info
 @payment_handler.route('/transfers/update')
@@ -69,13 +72,15 @@ def update_cc_details(user_id, payment_method_id):
         payment_method_id,
         customer=f'{user.stripe_customer_id}'
     )
+    return jsonify({})
 
 # owner creates contest and makes payment, which will later be sent to winner
 @payment_handler.route('/cc/pay')
 def charge_payment(user_id):
     user = User.query.get_or_404(user_id)
+    contest_id = request.args['contestid']
 
-    payment_method_ids = stripe.PaymentMethod.list(
+    payment_methods = stripe.PaymentMethod.list(
         customer=f'{user.stripe_customer_id}',
         type='card',
     )
@@ -84,10 +89,12 @@ def charge_payment(user_id):
         stripe.PaymentIntent.create(
             amount=1099,
             currency='usd',
-            customer=f'{user.stripe_customer_id}',
-            payment_method=f'{payment_method_ids[0]}',
+            customer=user.stripe_customer_id,
+            payment_method=payment_methods[0]["id"],
             off_session=True,
             confirm=True,
+            metadata={'contest_id': contest_id},
+            idempotency_key=str(uuid4())
         )
 
     except stripe.error.CardError as e:
@@ -96,6 +103,8 @@ def charge_payment(user_id):
         print("Code is: %s" % err.code)
         payment_intent_id = err.payment_intent['id']
         payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+
+    return jsonify({})
 
 
 # winner of contest receives payment
@@ -109,6 +118,7 @@ def receive_payment(user_id):
         transfer_group='{ORDER10}',
     )
 
+    return jsonify({})
 
 # owner gets refund
 @payment_handler.route('/cc/refund')
@@ -116,3 +126,5 @@ def refund_owner(user_id):
     refund = stripe.Refund.create(
         charge='{CHARGE_ID}',
     )
+
+    return jsonify({})
