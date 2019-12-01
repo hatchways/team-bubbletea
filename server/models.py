@@ -12,6 +12,7 @@ class User(db.Model):
     submissions = db.relationship('Submission', backref='artist', lazy=True)
     stripe_transfer_id = db.Column(db.String)
     stripe_customer_id = db.Column(db.String)
+    stripe_payments = db.relationship('Payment', backref='customer', lazy=True)
 
     def __repr__(self):
         return f'User number {self.id}'
@@ -84,3 +85,10 @@ class Submission(db.Model):
                 'contest_id': self.contest_id,
                 'contest_title': self.contest.title,
                 'active': self.active}
+
+
+class Payment(db.Model):
+    __tablename__ = 'payment'
+
+    payment_intent_id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

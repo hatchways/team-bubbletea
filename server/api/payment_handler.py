@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
-from models import User
+from models import User, Payment
 from datetime import datetime
 from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_CLIENT_ID_TEST
 from uuid import uuid4
@@ -103,7 +103,7 @@ def charge_payment(user_id):
     credit_card_id = payment_methods['data'][0]['id']
 
     try:
-        stripe.PaymentIntent.create(
+        payment_intent = stripe.PaymentIntent.create(
             amount=request.json['amount'],
             currency='usd',
             customer=user.stripe_customer_id,
@@ -113,6 +113,10 @@ def charge_payment(user_id):
             metadata={'contest_id': request.json['contest_id']},
             idempotency_key=str(uuid4())
         )
+        payment = Payment(
+            user_id=user.id, payment_intent_id=payment_intent['id'])
+        db.session.add(payment)
+        db.session.commit()
 
     except stripe.error.CardError as e:
         err = e.error
@@ -140,8 +144,8 @@ def receive_payment(user_id):
 # owner gets refund
 @payment_handler.route('/cc/refund', methods=['POST'])
 def refund_owner(user_id):
-    refund = stripe.Refund.create(
-        charge='{CHARGE_ID}',
+    stripe.Refund.create(
+        payment_intent=request.json['payment_intent_id']
     )
 
     return jsonify({})
