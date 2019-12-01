@@ -13,8 +13,10 @@ payment_handler = Blueprint('payment_handler', __name__)
 
 @payment_handler.route('')
 def home(user_id):
+    # need to change from null
     csrf_token = 'null'
-    redirect_uri = f'https://localhost/users/{user_id}/payments/setup-transfers'
+    # redirect_uri = f'https://localhost:3000/users/{user_id}/payments/transfers/setup'
+    redirect_uri = 'http://localhost:3000/payments-demo'
 
     Oauth_link = (f'https://connect.stripe.com/express/oauth/authorize?' +
                   f'redirect_uri={redirect_uri}&' +
@@ -28,11 +30,12 @@ def home(user_id):
 
 
 # user adds deposit info so he/she can receive payment upon winning contest
-@payment_handler.route('/transfers/setup')
+@payment_handler.route('/transfers/setup', methods=['POST'])
 def setup_transfer_details(user_id):
     user = User.query.get_or_404(user_id)
 
-    authorization_code = request.args['code']
+    authorization_code = request.json['code']
+    print('AUTH CODE: ', authorization_code)
     response = stripe.OAuth.token(
         grant_type='authorization_code',
         code=authorization_code,
@@ -55,6 +58,8 @@ def setup_cc_details(user_id):
 
     user.stripe_customer_id = customer["id"]
     db.session.commit()
+
+    print('WE ARE CREATING')
     return jsonify({'Success': 'Credit card added'})
 
 # artist updates deposit info
@@ -64,36 +69,48 @@ def update_transfer_details(user_id):
 
 # contest owner updates payment info
 # figure out intent.payment_method
-@payment_handler.route('/cc/update')
-def update_cc_details(user_id, payment_method_id):
+@payment_handler.route('/cc/update', methods=['POST'])
+def update_cc_details(user_id):
     user = User.query.get_or_404(user_id)
 
-    payment_method = stripe.PaymentMethod.attach(
-        payment_method_id,
-        customer=f'{user.stripe_customer_id}'
+    # delete previous credit card
+    payment_methods = stripe.PaymentMethod.list(
+        customer=f'{user.stripe_customer_id}',
+        type='card',
     )
-    return jsonify({})
+    credit_card_id = payment_methods['data'][0]['id']
+    stripe.PaymentMethod.detach(credit_card_id)
+
+    # add new credit card
+    stripe.PaymentMethod.attach(
+        request.json['payment_method_id'],
+        customer=user.stripe_customer_id,
+    )
+
+    print('WE ARE UPDATING')
+
+    return jsonify({'Success': 'Credit card updated'})
 
 # owner creates contest and makes payment, which will later be sent to winner
-@payment_handler.route('/cc/pay')
+@payment_handler.route('/cc/pay', methods=['POST'])
 def charge_payment(user_id):
     user = User.query.get_or_404(user_id)
-    contest_id = request.args['contestid']
 
     payment_methods = stripe.PaymentMethod.list(
         customer=f'{user.stripe_customer_id}',
         type='card',
     )
+    credit_card_id = payment_methods['data'][0]['id']
 
     try:
         stripe.PaymentIntent.create(
-            amount=1099,
+            amount=request.json['amount'],
             currency='usd',
             customer=user.stripe_customer_id,
-            payment_method=payment_methods[0]["id"],
+            payment_method=credit_card_id,
             off_session=True,
             confirm=True,
-            metadata={'contest_id': contest_id},
+            metadata={'contest_id': request.json['contest_id']},
             idempotency_key=str(uuid4())
         )
 
@@ -104,24 +121,24 @@ def charge_payment(user_id):
         payment_intent_id = err.payment_intent['id']
         payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
 
-    return jsonify({})
+    return jsonify({'Success': 'Payment charged'})
 
 
 # winner of contest receives payment
-@payment_handler.route('/transfers/receive')
+@payment_handler.route('/transfers/receive', methods=['POST'])
 def receive_payment(user_id):
-    transfer = stripe.Transfer.create(
-        amount=7000,
+    user = User.query.get_or_404(user_id)
+
+    stripe.Transfer.create(
+        amount=request.json['amount'],
         currency='usd',
-        source_transaction="{CHARGE_ID}",
-        destination='{{CONNECTED_STRIPE_ACCOUNT_ID}}',
-        transfer_group='{ORDER10}',
+        destination=user.stripe_transfer_id,
     )
 
-    return jsonify({})
+    return jsonify({'Success': 'Payment received'})
 
 # owner gets refund
-@payment_handler.route('/cc/refund')
+@payment_handler.route('/cc/refund', methods=['POST'])
 def refund_owner(user_id):
     refund = stripe.Refund.create(
         charge='{CHARGE_ID}',

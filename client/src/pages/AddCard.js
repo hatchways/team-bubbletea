@@ -24,7 +24,7 @@ class AddCard extends React.Component {
             console.log('ERROR IN CONFIRM CARD SETUP')
         } else {
             if (setupIntent.status === 'succeeded') {
-                const response = await fetch(`/users/${this.props.userID}/payments/cc/setup`, {
+                const response = await fetch(`/users/${this.props.userID}/payments/cc/${this.props.setupOrUpdate}`, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
