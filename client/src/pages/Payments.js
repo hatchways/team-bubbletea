@@ -13,6 +13,7 @@ var Payments = function () {
     const [clientSecret, setClientSecret] = useState(null);
     const [OauthLink, setOauthLink] = useState("#");
     const [connectCode, setConnectCode] = useState(null);
+    const [refundOptions, setRefundOptions] = useState(null);
 
 
     if (OauthLink === "#") {
@@ -55,15 +56,11 @@ var Payments = function () {
         connectDiv = <a href="#">We are done</a>;
     }
 
-    const response = await fetch(`/users/${userID}/payments/cc/pay`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ contest_id: contestID, amount: 3300 })
-    });
-    const refundOptions = response.json().map(p => { value: p; label: p })
+    // (async () => {
+    //     const response = await fetch(`/users/${userID}/payments/cc/payments`)
+    //     setRefundOptions(response.json().map(p => { value: p; label: p }));
+    // })();
+
 
     function makePayment() {
         (async () => {
@@ -126,13 +123,13 @@ var Payments = function () {
             <div>
                 <button type="submit" onClick={refundPayment}>Refund Payment</button>
             </div>
-            <form onSubmit={refundPayment}>
+            {/* <form onSubmit={refundPayment}>
                 <label>
                     Potential refunds:
                     <Select options={refundOptions} />
                 </label>
                 <input type="submit" value="Get refund" />
-            </form>
+            </form> */}
         </div>
     );
 }

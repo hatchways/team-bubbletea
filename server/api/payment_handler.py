@@ -151,7 +151,7 @@ def refund_owner(user_id):
     return jsonify({})
 
 # owner gets refund
-@payment_handler.route('/cc/payments', methods=['POST'])
+@payment_handler.route('/cc/payments')
 def get_payments(user_id):
     user = User.query.get_or_404(user_id)
     payments = Payment.query.filter_by(user_id=user.id).all()
