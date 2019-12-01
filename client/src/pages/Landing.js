@@ -18,22 +18,6 @@ class LandingPage extends Component {
     step: 0
   };
 
-  componentDidMount() {
-    fetch("/welcome")
-      .then(res => {
-        console.log(res);
-        if (res.status === 200) return res.json();
-        else throw Error("Couldn't connect to the server");
-      })
-      .then(res => {
-        this.setState({ welcomeMessage: res.welcomeMessage });
-        this.incrementStep();
-      })
-      .catch(err => {
-        console.log(err.message);
-      });
-  }
-
   incrementStep = () => {
     this.setState(prevState => ({ step: (prevState.step += 1) }));
   };

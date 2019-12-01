@@ -18,7 +18,7 @@ function App() {
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
           <Route path="/upload-submission" component={UploadSubmission} />
-          <Route path="/view-submission" component={ViewSubmissions} />
+          <Route path="/view-submissions" component={ViewSubmissions} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>
