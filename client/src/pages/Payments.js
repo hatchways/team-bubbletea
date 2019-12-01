@@ -5,6 +5,7 @@ import InjectedAddCard from "./AddCard";
 import { Typography } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Route, Link } from "react-router-dom";
+import Select from 'react-select'
 
 var Payments = function () {
     let userID = 1;
@@ -53,6 +54,16 @@ var Payments = function () {
     } else {
         connectDiv = <a href="#">We are done</a>;
     }
+
+    const response = await fetch(`/users/${userID}/payments/cc/pay`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ contest_id: contestID, amount: 3300 })
+    });
+    const refundOptions = response.json().map(p => { value: p; label: p })
 
     function makePayment() {
         (async () => {
@@ -115,6 +126,13 @@ var Payments = function () {
             <div>
                 <button type="submit" onClick={refundPayment}>Refund Payment</button>
             </div>
+            <form onSubmit={refundPayment}>
+                <label>
+                    Potential refunds:
+                    <Select options={refundOptions} />
+                </label>
+                <input type="submit" value="Get refund" />
+            </form>
         </div>
     );
 }
