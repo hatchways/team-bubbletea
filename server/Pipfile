@@ -7,11 +7,17 @@ verify_ssl = true
 
 [packages]
 flask = "*"
-Flask-SQLAlchemy = "*"
-Flask-Migrate = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
 psycopg2 = "*"
+<<<<<<< HEAD
 Flask-Script = "*"
 stripe = "*"
+=======
+pyjwt = "*"
+flask-cors = "*"
+
+>>>>>>> dev
 
 [requires]
 python_version = "3.7"
