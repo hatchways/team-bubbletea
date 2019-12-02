@@ -3,8 +3,6 @@ import React, { useState } from "react";
 var Transfer = function ({ userID }) {
 
     const [OauthLink, setOauthLink] = useState("#");
-    const [connectCode, setConnectCode] = useState(null);
-
 
     if (OauthLink === "#") {
         (async () => {
@@ -14,38 +12,9 @@ var Transfer = function ({ userID }) {
         })();
     }
 
-    let connectDiv = <a href="#">Link not available</a>;
-    let connectDone = false;
-    if (connectCode === null) {
-        connectDiv = <a href={OauthLink} target="_blank">Add/Update Account to Receive Payments</a>;
-
-        (async () => {
-            const urlParams = await new URLSearchParams(window.location.search);
-            setConnectCode(urlParams.get('code'));
-        })();
-
-    } else if (connectDone === false) {
-        (async () => {
-            const response = await fetch(`/users/${userID}/payments/transfers/setup`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: connectCode })
-            });
-            if (await response) {
-                connectDone = true;
-                connectDiv = <a href="#">Account is set up</a>;
-            }
-        })();
-    } else {
-        connectDiv = <a href="#">Account is set up</a>;
-    }
-
     return (
         <div>
-            {connectDiv}
+            <a href={OauthLink} target="_blank">Add/Update Account to Receive Payments</a>;
         </div>
     );
 };

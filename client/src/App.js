@@ -13,10 +13,11 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <BrowserRouter>
-        <Route path="/payments-demo" component={Payments} />
+
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
+          <Route path="/payments-demo" component={Payments} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>

@@ -15,7 +15,8 @@ payment_handler = Blueprint('payment_handler', __name__)
 @payment_handler.route('/oauth')
 def get_oauth_link(user_id):
     state_value = secrets.token_urlsafe()
-    redirect_uri = 'http://localhost:3000/payments-demo'
+    # redirect_uri = 'http://localhost:3000/payments-demo'
+    redirect_uri = 'http://localhost:5000/users/1/payments/transfers/setup'
     Oauth_link = (f'https://connect.stripe.com/express/oauth/authorize?' +
                   f'redirect_uri={redirect_uri}&' +
                   f'client_id={STRIPE_CLIENT_ID_TEST}&' +
@@ -32,18 +33,15 @@ def get_client_secret(user_id):
     return jsonify({'client_secret': intent.client_secret})
 
 
-@payment_handler.route('/transfers/setup', methods=['POST'])
+@payment_handler.route('/transfers/setup', methods=['GET', 'POST'])
 def setup_transfer_details(user_id):
     user = User.query.get_or_404(user_id)
-
-    authorization_code = request.json['code']
-
     response = stripe.OAuth.token(
         grant_type='authorization_code',
-        code=authorization_code,
+        code=request.args['code'],
     )
 
-    user.stripe_transfer_id = response.stripe_user_id
+    user.stripe_transfer_id = response['stripe_user_id']
     db.session.commit()
     return jsonify({'Success': 'Bank account added and can receive transfers'})
 
