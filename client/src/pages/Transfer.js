@@ -17,7 +17,7 @@ var Transfer = function ({ userID }) {
     let connectDiv = <a href="#">Link not available</a>;
     let connectDone = false;
     if (connectCode === null) {
-        connectDiv = <a href={OauthLink} target="_blank">Add Account to Receive Payments</a>;
+        connectDiv = <a href={OauthLink} target="_blank">Add/Update Account to Receive Payments</a>;
 
         (async () => {
             const urlParams = await new URLSearchParams(window.location.search);
@@ -36,11 +36,11 @@ var Transfer = function ({ userID }) {
             });
             if (await response) {
                 connectDone = true;
-                connectDiv = <a href="#">We are done</a>;
+                connectDiv = <a href="#">Account is set up</a>;
             }
         })();
     } else {
-        connectDiv = <a href="#">We are done</a>;
+        connectDiv = <a href="#">Account is set up</a>;
     }
 
     return (
