@@ -13,7 +13,7 @@ var Payments = function () {
     if (!clientSecret) {
         (async () => {
             const response = await fetch(`/users/${userID}/payments/secret`);
-            const { clientSecret: newClientSecret } = await response.json();
+            const { client_secret: newClientSecret } = await response.json();
             setClientSecret(newClientSecret);
         })();
     }
@@ -52,7 +52,6 @@ var Payments = function () {
             </div>
         </div>
     );
-
 
     if (stripePage === 'creditCard') {
         return [optionsMenu, creditCardPage];

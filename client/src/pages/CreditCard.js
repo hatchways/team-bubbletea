@@ -40,7 +40,7 @@ class CreditCard extends React.Component {
                     Card details
                     <CardElement style={{ base: { fontSize: '18px' } }} />
                 </label>
-                <button>Add card</button>
+                <button>{this.props.setupOrUpdate} card</button>
             </form>
         );
     }

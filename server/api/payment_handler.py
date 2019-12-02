@@ -30,6 +30,7 @@ def get_oauth_link(user_id):
 @payment_handler.route('/secret')
 def get_client_secret(user_id):
     intent = stripe.SetupIntent.create()
+    print('python cli secret', intent.client_secret)
     return jsonify({'client_secret': intent.client_secret})
 
 
