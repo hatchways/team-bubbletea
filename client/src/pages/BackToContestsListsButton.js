@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -22,6 +23,7 @@ export function BackToContestsListButton() {
 
   return (
   	<Button color="inherit" className={classes.button}>
+        <ArrowBackIcon/>
   	    <Typography className={classes.title} variant="caption">
             Back to contests' list
         </Typography>

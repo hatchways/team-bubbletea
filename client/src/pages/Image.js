@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from '@material-ui/core'
 
 export class Image extends React.Component {
 	constructor() {
@@ -38,9 +39,9 @@ export class Image extends React.Component {
 				onMouseLeave={this.toggleHover} 
 				onClick={() => this.props.imageClickHandler(this.props.imageURL)}>
 					<img width="200px" height="200px" src={this.props.imageURL} style={{ opacity : this.state.hover ? 0.5 : 1 }} />
-					{this.state.hover && <div style={{ width: "30%", height: "5%", top: "47.5%", left : "35%", position: "absolute", textAlign: "center" }}>
+					{this.state.hover && <div style={{ width: "30%", height: "5%", top: "41%", left : "30%", position: "absolute", textAlign: "center" }}>
 						<div style={{ fontSize: "16px" }}>
-						Expand
+						<Button variant="contained">Expand</Button>
 						</div>
 					</div>}
 			</div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@material-ui/core';
+import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogActions, Typography, ClickAwayListener } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +22,7 @@ export function ImagePopUp(props) {
 
     return (
         <div>
+        <ClickAwayListener onClickAway={props.closePopUp}>
         <Dialog open={props.imagePopUpDisplayed}>
             <DialogTitle>
                 <Typography variant="overline">
@@ -40,6 +41,7 @@ export function ImagePopUp(props) {
                 </Button>
             </DialogActions>
         </Dialog>
+        </ClickAwayListener>
         </div>
   );
 }
