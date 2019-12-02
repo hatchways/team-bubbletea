@@ -1,137 +1,70 @@
-import React, { Component, useEffect, useState } from "react";
-import { CardElement, injectStripe, Elements, StripeProvider } from 'react-stripe-elements';
-import InjectedAddCard from "./AddCard";
-
-import { Typography } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { Route, Link } from "react-router-dom";
-import Select from 'react-select'
+import React, { useState } from "react";
+import { Elements, StripeProvider } from 'react-stripe-elements';
+import InjectedCreditCard from "./CreditCard";
+import ChargePayment from "./ChargePayment";
+import Transfer from "./Transfer";
+import Refund from "./Refund";
 
 var Payments = function () {
     let userID = 1;
-    let contestID = 3;
+    const [stripePage, setStripePage] = useState(null);
     const [clientSecret, setClientSecret] = useState(null);
-    const [OauthLink, setOauthLink] = useState("#");
-    const [connectCode, setConnectCode] = useState(null);
-    const [refundOptions, setRefundOptions] = useState(null);
 
-
-    if (OauthLink === "#") {
+    if (!clientSecret) {
         (async () => {
-            const response = await fetch(`/users/${userID}/payments`);
-            const { client_secret: newClientSecret, Oauth_link: newOauthLink } = await response.json();
+            const response = await fetch(`/users/${userID}/payments/secret`);
+            const { clientSecret: newClientSecret } = await response.json();
             setClientSecret(newClientSecret);
-            setOauthLink(newOauthLink);
         })();
     }
 
-
-
-    let connectDiv = <a href="#">Link not available</a>;
-    let connectDone = false;
-    if (connectCode === null) {
-        connectDiv = <a href={OauthLink} target="_blank">Add Account to Receive Payments</a>;
-
-        (async () => {
-            const urlParams = await new URLSearchParams(window.location.search);
-            setConnectCode(urlParams.get('code'));
-        })();
-
-    } else if (connectDone === false) {
-        (async () => {
-            const response = await fetch(`/users/${userID}/payments/transfers/setup`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: connectCode })
-            });
-            if (await response) {
-                connectDone = true;
-                connectDiv = <a href="#">We are done</a>;
-            }
-        })();
-    } else {
-        connectDiv = <a href="#">We are done</a>;
+    function changeStripePage(event) {
+        setStripePage(event.target.value);
     }
 
-    // (async () => {
-    //     const response = await fetch(`/users/${userID}/payments/cc/payments`)
-    //     setRefundOptions(response.json().map(p => { value: p; label: p }));
-    // })();
+    const optionsMenu = (
+        <div>
+            <select onChange={changeStripePage}>
+                <option value="none">---</option>
+                <option value="creditCard">Add or update my credit card information</option>
+                <option value="chargePayment">Make a payment</option>
+                <option value="transfer">Set up my bank account to receive transfers</option>
+                <option value="refund">Claim a refund</option>
+            </select>
+        </div >
+    )
 
-
-    function makePayment() {
-        (async () => {
-            const response = await fetch(`/users/${userID}/payments/cc/pay`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ contest_id: contestID, amount: 3300 })
-            });
-        })();
-        (async () => {
-            const response = await fetch(`/users/${userID}/payments/transfers/receive`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ amount: 2000 })
-            });
-        })();
-    }
-
-    function refundPayment() {
-        (async () => {
-            const response = await fetch(`/users/${userID}/payments/cc/refund`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ payment_intent_id: 'pi_1FkzvgCTioA7mNziCEymRDXa' })
-            });
-        })();
-    }
-
-    return (
+    const creditCardPage = (
         <div>
             <div>
-                {connectDiv}
-            </div>
-            <div>
                 <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
                     <Elements>
-                        <InjectedAddCard clientSecret={clientSecret} userID={userID} setupOrUpdate={"setup"} />
+                        <InjectedCreditCard key={1} clientSecret={clientSecret} userID={userID} setupOrUpdate={"setup"} />
                     </Elements>
                 </StripeProvider>
             </div>
             <div>
                 <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
                     <Elements>
-                        <InjectedAddCard clientSecret={clientSecret} userID={userID} setupOrUpdate={"update"} />
+                        <InjectedCreditCard key={2} clientSecret={clientSecret} userID={userID} setupOrUpdate={"update"} />
                     </Elements>
                 </StripeProvider>
             </div>
-            <div>
-                <button type="submit" onClick={makePayment}>Make Payment</button>
-            </div>
-            <div>
-                <button type="submit" onClick={refundPayment}>Refund Payment</button>
-            </div>
-            {/* <form onSubmit={refundPayment}>
-                <label>
-                    Potential refunds:
-                    <Select options={refundOptions} />
-                </label>
-                <input type="submit" value="Get refund" />
-            </form> */}
         </div>
     );
+
+
+    if (stripePage === 'creditCard') {
+        return [optionsMenu, creditCardPage];
+    } else if (stripePage === 'transfer') {
+        return [optionsMenu, <Transfer userID={userID} />];
+    } else if (stripePage === 'chargePayment') {
+        return [optionsMenu, <ChargePayment userID={userID} />];
+    } else if (stripePage === 'refund') {
+        return [optionsMenu, <Refund userID={userID} />];
+    } else {
+        return optionsMenu;
+    }
 }
 
 export default Payments;

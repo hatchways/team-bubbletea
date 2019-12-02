@@ -10,14 +10,11 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 psycopg2 = "*"
-<<<<<<< HEAD
 Flask-Script = "*"
 stripe = "*"
-=======
 pyjwt = "*"
 flask-cors = "*"
 
->>>>>>> dev
 
 [requires]
 python_version = "3.7"

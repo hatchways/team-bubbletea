@@ -6,6 +6,7 @@ from api.contest_handler import contest_handler
 from api.submission_handler import submission_handler
 from api.payment_handler import payment_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
+from database import db
 import jwt
 import json
 import datetime

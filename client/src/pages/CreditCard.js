@@ -1,11 +1,7 @@
-import React, { Component, useEffect, useState } from "react";
-import { CardElement, injectStripe, Elements } from 'react-stripe-elements';
+import React from "react";
+import { CardElement, injectStripe } from 'react-stripe-elements';
 
-import { Typography } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { Route, Link } from "react-router-dom";
-
-class AddCard extends React.Component {
+class CreditCard extends React.Component {
 
     handleSubmit = async (ev) => {
 
@@ -50,4 +46,4 @@ class AddCard extends React.Component {
     }
 }
 
-export default injectStripe(AddCard);
+export default injectStripe(CreditCard);

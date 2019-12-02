@@ -11,8 +11,8 @@ stripe.api_key = STRIPE_SECRET_KEY_TEST
 payment_handler = Blueprint('payment_handler', __name__)
 
 
-@payment_handler.route('')
-def home(user_id):
+@payment_handler.route('/oauth')
+def get_oauth_link(user_id):
     # need to change from null
     csrf_token = 'null'
     # redirect_uri = f'https://localhost:3000/users/{user_id}/payments/transfers/setup'
@@ -24,9 +24,13 @@ def home(user_id):
                   f'state={csrf_token}&' +
                   f'stripe_user[business_type]=individual&' +
                   f'suggested_capabilities[]=transfers')
+    return jsonify({'Oauth_link': Oauth_link})
 
+
+@payment_handler.route('/secret')
+def get_client_secret(user_id):
     intent = stripe.SetupIntent.create()
-    return jsonify({'client_secret': intent.client_secret, 'Oauth_link': Oauth_link})
+    return jsonify({'client_secret': intent.client_secret})
 
 
 # user adds deposit info so he/she can receive payment upon winning contest
