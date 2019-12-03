@@ -18,30 +18,30 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export function ImagePopUp(props) {
-    const classes = useStyles();
+  const classes = useStyles();
 
-    return (
-        <div>
-        <ClickAwayListener onClickAway={props.closePopUp}>
+  return (
+    <div>
+      <ClickAwayListener onClickAway={props.closePopUp}>
         <Dialog open={props.imagePopUpDisplayed}>
-            <DialogTitle>
-                <Typography variant="overline">
-            Submitted by: /artistname/
+          <DialogTitle>
+            <Typography variant="overline">
+              Submitted by: /artistname/
                 </Typography>
-            </DialogTitle>
-            <DialogContent dividers>
-                <img width="100%" height="100%" src={props.imageURL}/>
-            </DialogContent>
-            <DialogActions>
-                <Button color="default" className={classes.winnerButton}>
-                    Declare Winner 
+          </DialogTitle>
+          <DialogContent dividers>
+            <img width="100%" height="100%" src={props.imageURL} alt="submission-popup" />
+          </DialogContent>
+          <DialogActions>
+            <Button color="default" className={classes.winnerButton}>
+              Declare Winner
                 </Button>
-                <Button color="default" onClick={props.closePopUp} >
-                    Close
+            <Button color="default" onClick={props.closePopUp} >
+              Close
                 </Button>
-            </DialogActions>
+          </DialogActions>
         </Dialog>
-        </ClickAwayListener>
-        </div>
+      </ClickAwayListener>
+    </div>
   );
 }
