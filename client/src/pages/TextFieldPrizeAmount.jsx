@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { makeStyles, TextField, Typography, Grid, InputAdornment } from '@material-ui/core';
+import { makeStyles, TextField, Typography, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 	root: {

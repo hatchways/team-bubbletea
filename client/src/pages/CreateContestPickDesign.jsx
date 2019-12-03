@@ -1,5 +1,5 @@
-import React, { useState, Fragment, useEffect } from 'react';
-import { makeStyles, TextField, Typography, Grid } from '@material-ui/core';
+import React, { useState, Fragment } from 'react';
+import { makeStyles, Typography, Grid } from '@material-ui/core';
 import { InspDesign } from './InspDesign';
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +45,7 @@ export function CreateContestPickDesign(props) {
         </Grid>
         <Grid item xs={12} className={classes.container}>
           <Grid container spacing={2} justify="center">
-            {designs.map((design, j) => ( <InspDesign imageURL={designs[j]} /> ))}
+            {designs.map((design, j) => (<InspDesign imageURL={designs[j]} />))}
           </Grid>
         </Grid>
       </Grid>

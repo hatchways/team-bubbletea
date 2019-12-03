@@ -25,8 +25,6 @@ const useStyles = makeStyles(theme => ({
   })
 )
 
-
-
 export function InspDesign(props) {
   const classes = useStyles();
   const [selected, setSelected] = useState(false);

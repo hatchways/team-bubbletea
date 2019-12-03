@@ -25,34 +25,34 @@ export function CreateContestPaper(props) {
 
   return (
     <>
-    <Typography align="center" variant="h4" className={classes.header}>
-			Create new contest
+      <Typography align="center" variant="h4" className={classes.header}>
+        Create new contest
 		</Typography>
-    <Grid container justify="center">
-      <Paper className={classes.paper}>
-        <TextFieldLarge
-          label="What do you need designed?"
-          placeholder="Write a descriptive contest title"
-          rowsMax="1"
-        />
-        <TextFieldLarge
-          label="Description"
-          placeholder="Details about what type of tattoo you want"
-          rows="10"
-          rowsMax="10"
-        />
-        <Grid container>
-          <Grid item xs={4}>
-            <TextFieldPrizeAmount
-              label="Prize amount"
-              placeholder="$100.00"
-            />
+      <Grid container justify="center">
+        <Paper className={classes.paper}>
+          <TextFieldLarge
+            label="What do you need designed?"
+            placeholder="Write a descriptive contest title"
+            rowsMax="1"
+          />
+          <TextFieldLarge
+            label="Description"
+            placeholder="Details about what type of tattoo you want"
+            rows="10"
+            rowsMax="10"
+          />
+          <Grid container>
+            <Grid item xs={4}>
+              <TextFieldPrizeAmount
+                label="Prize amount"
+                placeholder="$100.00"
+              />
+            </Grid>
           </Grid>
-        </Grid>
-        <CreateContestPickDesign />
-        <CreateContestButton />
-      </Paper>
-    </Grid>
+          <CreateContestPickDesign />
+          <CreateContestButton />
+        </Paper>
+      </Grid>
     </>
   )
 }
