@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { theme } from "./themes/theme";
 import LandingPage from "./pages/Landing";
 import Login from "./pages/Login";
+import CreateContest from "./pages/CreateContest";
 
 import "./App.css";
 
@@ -15,6 +16,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
+          <Route path="/createcontest" component={CreateContest} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>
