@@ -16,7 +16,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={LandingPage} />
           <Route path="/login" component={Login} />
-          <Route path="/createcontest" component={CreateContest} />
+          <Route path="/create-contest" component={CreateContest} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>
