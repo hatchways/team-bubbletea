@@ -5,6 +5,7 @@ import { TextFieldLarge } from './TextFieldLarge';
 import { TextFieldPrizeAmount } from './TextFieldPrizeAmount';
 import { CreateContestPickDesign } from './CreateContestPickDesign';
 import { CreateContestButton } from './CreateContestButton';
+import { CreateContestDatePicker } from './CreateContestDatePicker';
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -27,7 +28,7 @@ export function CreateContestPaper(props) {
     <>
       <Typography align="center" variant="h4" className={classes.header}>
         Create new contest
-		</Typography>
+		  </Typography>
       <Grid container justify="center">
         <Paper className={classes.paper}>
           <TextFieldLarge
@@ -41,12 +42,15 @@ export function CreateContestPaper(props) {
             rows="10"
             rowsMax="10"
           />
-          <Grid container>
+          <Grid container spacing={3}>
             <Grid item xs={4}>
               <TextFieldPrizeAmount
                 label="Prize amount"
                 placeholder="$100.00"
               />
+            </Grid>
+            <Grid item xs={8}>
+              <CreateContestDatePicker />
             </Grid>
           </Grid>
           <CreateContestPickDesign />

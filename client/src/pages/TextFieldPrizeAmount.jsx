@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { makeStyles, TextField, Typography, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
 		"& fieldset": {
 			borderRadius: 0,
 		},
+	},
+	inputProps: {
+		padding: "30px",
 	}
 }));
 
@@ -24,24 +27,23 @@ export function TextFieldPrizeAmount(props) {
 	const classes = useStyles();
 
 	return (
-		<Fragment>
-			<Grid container justify="center">
-				<Grid item xs={12}>
-					<Typography align="left" variant="h5" className={classes.caption}>
-						{props.label}
-					</Typography>
-				</Grid>
-				<Grid item xs={12}>
-					<TextField
-						type={props.type}
-						className={classes.textfield}
-						variant="outlined"
-						onChange={props.onChange}
-						value={props.value}
-						placeholder={props.placeholder}
-					/>
-				</Grid>
+		<Grid container justify="center">
+			<Grid item xs={12}>
+				<Typography align="left" variant="h5" className={classes.caption}>
+					{props.label}
+				</Typography>
 			</Grid>
-		</Fragment>
+			<Grid item xs={12}>
+				<TextField
+					type={props.type}
+					className={classes.textfield}
+					inputProps={{className: classes.inputProps}}
+					variant="outlined"
+					onChange={props.onChange}
+					value={props.value}
+					placeholder={props.placeholder}
+				/>
+			</Grid>
+		</Grid>
 	)
 }
