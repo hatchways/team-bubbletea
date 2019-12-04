@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
 from models import User, Payment
 from datetime import datetime
-from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_CLIENT_ID_TEST
+from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_CLIENT_ID_TEST, REDIRECT_URI_BASE
 from uuid import uuid4
 import stripe
 import secrets
@@ -16,7 +16,7 @@ payment_handler = Blueprint('payment_handler', __name__)
 def get_oauth_link(user_id):
     state_value = secrets.token_urlsafe()
     # redirect_uri = 'http://localhost:3000/payments-demo'
-    redirect_uri = 'http://localhost:5000/users/1/payments/transfers/setup'
+    redirect_uri = '{REDIRECT_URI_BASE}/users/1/payments/transfers/setup'
     Oauth_link = (f'https://connect.stripe.com/express/oauth/authorize?' +
                   f'redirect_uri={redirect_uri}&' +
                   f'client_id={STRIPE_CLIENT_ID_TEST}&' +
