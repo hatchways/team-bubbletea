@@ -3,6 +3,8 @@ import { Elements, StripeProvider } from 'react-stripe-elements';
 import InjectedCreditCard from "./CreditCard";
 import History from "./History";
 import Transfer from "./Transfer";
+import ListPaymentOptions from "./ListPaymentOptions"
+import List from '@material-ui/core/List';
 import { Header } from './Header';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Grid, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
@@ -10,20 +12,7 @@ import { LocationOn } from '@material-ui/icons';
 
 
 const useStyles = makeStyles(theme => ({
-    root: {
-        "padding-bottom": "1%",
-        "padding-top": "0.5%",
-        "box-shadow": null,
-    },
-    nav: {
-        "margin-left": "25%",
-        "margin-right": "25%",
-        display: "flex"
-    },
-    info: {
-        "margin-left": "25%",
-        "margin-right": "25%",
-    },
+
 }));
 
 var Payments = function () {
@@ -36,25 +25,9 @@ var Payments = function () {
     return (
         <div>
             <Header />
-            <Grid container justify="center">
-                <Grid item xs={9} md={7} lg={12} className={classes.root}>
-                    <Paper className={classes.nav}>
-                        <BottomNavigation
-                            value={stripePage}
-                            onChange={(event, newValue) => {
-                                setStripePage(newValue);
-                            }}
-                            showLabels
-                            className={classes.root}
-                        >
-                            <BottomNavigationAction value='summary' label="Summary" icon={<LocationOn />} />
-                            <BottomNavigationAction value='creditCard' label="Credit Card" icon={<LocationOn />} />
-                            <BottomNavigationAction value='transfer' label="Bank Account" icon={<LocationOn />} />
-                            <BottomNavigationAction value='history' label="View Payment/Transfer History" icon={<LocationOn />} />
-                        </BottomNavigation>
-                    </Paper>
-                </Grid>
-                <Grid item xs={9} md={7} lg={12} className={classes.info}>
+            <Grid container direction="row" item xs={6} md={6} lg={6} justify="center" alignItems="baseline" >
+                <List><ListPaymentOptions setStripePage={setStripePage} /></List>
+                <Grid item>
                     {stripePage === 'creditCard' &&
                         <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
                             <Elements>

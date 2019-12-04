@@ -1,5 +1,10 @@
 import React from "react";
 import { CardElement, injectStripe } from 'react-stripe-elements';
+import { makeStyles, Typography } from '@material-ui/core';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List';
+import Button from '@material-ui/core/Button';
 
 class CreditCard extends React.Component {
     constructor(props) {
@@ -25,16 +30,8 @@ class CreditCard extends React.Component {
             this.setState({ brand: await data['brand'] });
             this.setState({ expMonth: await data['exp_month'] });
             this.setState({ expYear: await data['exp_year'] });
-            this.setState({ ccExists: await this.state.last4 ? true : false })
-            this.setState({ ccHeader: await this.state.clientSecret ? <h4>{this.makeHeader()}</h4> : <h6>No credit card added yet</h6> })
+            this.setState({ ccExists: await this.state.last4 ? true : false });
         })();
-    }
-
-    makeHeader() {
-        return `Credit card details \n
-                Card number: **** **** **** ${this.state.last4}\n
-                Brand: ${this.state.brand}\n
-                Expiration ${this.state.expMonth} / ${this.state.expYear}`
     }
 
     handleSubmit = async (ev) => {
@@ -87,13 +84,30 @@ class CreditCard extends React.Component {
         return (
             <div>
                 <div>
-                    By adding your credit card information, you are authorizing Tattoo Art <br />
-                    to charge this card whenever you create a contest.  The charge will be in <br />
-                    the amount of the contest prize.
+                    <Typography variant="h6" component="h6">
+                        By adding your credit card information, you are authorizing Tattoo Art <br />
+                        to charge this card whenever you create a contest.  The charge will be in <br />
+                        the amount of the contest prize.
+                </Typography>
+
                 </div>
-                <div>
-                    {this.state.ccHeader}
-                </div>
+                {this.state.clientSecret &&
+                    <div>
+                        <List>
+                            <ListItem>
+                                <ListItemText primary="Credit card details" />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemText primary={`Card number: **** **** **** ${this.state.last4}`} />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemText primary={`Brand: ${this.state.brand}`} />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemText primary={`Expiration ${this.state.expMonth} / ${this.state.expYear}`} />
+                            </ListItem>
+                        </List>
+                    </div>}
                 <form onSubmit={this.handleSubmit} id="payment-form">
                     <div className="form-row">
                         <label htmlFor="card-element">
@@ -103,8 +117,12 @@ class CreditCard extends React.Component {
                             <CardElement style={this.style} />
                         </div>
                         <div id="card-errors" role="alert"></div>
+                        <div>
+                            <Button color="inherit">
+                                {this.state.ccExists ? 'Update' : 'Add'} credit card
+                            </Button>
+                        </div>
                     </div>
-                    <button>{this.state.ccExists ? 'Update' : 'Add'} credit card</button>
                 </form>
             </div>
 

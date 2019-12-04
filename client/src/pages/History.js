@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import HistoryTable from "./HistoryTable"
 
 var History = function ({ userID }) {
 
@@ -34,36 +35,44 @@ var History = function ({ userID }) {
 
     return (
         <div>
-            <div>
-                <h3>Payment History</h3>
-                <table>
-                    {
-                        paymentHistory &&
-                        paymentHistory.map((payment) =>
-                            <tr>
-                                <td>Contest {payment['contest_id']}</td>
-                                <td>{payment['amount']} Prize</td>
-                                <td><button type="submit" onClick={() => refundPayment(payment['id'])}>Refund Payment</button></td>
-                            </tr>
-                        )
-                    }
-                </table>
-            </div>
-            <div>
-                <h3>Transfer History</h3>
-                <table>
-                    {
-                        transferHistory &&
-                        transferHistory.map((transfer) =>
-                            <tr>
-                                <td>Contest {transfer['contest_id']}</td>
-                                <td>{transfer['amount']} Prize</td>
-                            </tr>
-                        )
-                    }
-                </table>
-            </div>
+            <HistoryTable history={paymentHistory} refundPayment={refundPayment} transactionType={"payment"} />
+            <HistoryTable history={transferHistory} refundPayment={refundPayment} transactionType={"transfer"} />
         </div>
+        // <div>
+        //     <div>
+        //         <h3>Payment History</h3>
+        //         <table>
+        //             <tbody>
+        //                 {
+        //                     paymentHistory &&
+        //                     paymentHistory.map((payment) =>
+        //                         <tr>
+        //                             <td>Contest {payment['contest_id']}</td>
+        //                             <td>{payment['amount']} Prize</td>
+        //                             <td><button type="submit" onClick={() => refundPayment(payment['id'])}>Refund Payment</button></td>
+        //                         </tr>
+        //                     )
+        //                 }
+        //             </tbody>
+        //         </table>
+        //     </div>
+        //     <div>
+        //         <h3>Transfer History</h3>
+        //         <table>
+        //             <tbody>
+        //                 {
+        //                     transferHistory &&
+        //                     transferHistory.map((transfer) =>
+        //                         <tr>
+        //                             <td>Contest {transfer['contest_id']}</td>
+        //                             <td>{transfer['amount']} Prize</td>
+        //                         </tr>
+        //                     )
+        //                 }
+        //             </tbody>
+        //         </table>
+        //     </div>
+        // </div>
     );
 };
 
