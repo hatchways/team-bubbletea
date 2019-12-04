@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
 from models import Contest
 from datetime import datetime
+from api.payment_handler import charge_payment
 
 contest_handler = Blueprint(
     'contest_handler', __name__)
@@ -32,6 +33,12 @@ def create():
 
     db.session.add(contest)
     db.session.commit()
+
+    # We are currently charging contest owner when winner is declared,
+    #   but we may want to change it to charge them when contest is
+    #   created
+    # charge_payment(contest.id)
+
     return redirect(url_for('contest_handler.show_contest', id=contest.id))
 
 

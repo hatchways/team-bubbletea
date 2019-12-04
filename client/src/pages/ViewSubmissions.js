@@ -12,8 +12,11 @@ export class ViewSubmissions extends React.Component {
     this.state = {
       submissions: [],
       submissionKeys: [],
+      submissionIDs: [],
       imagePopUpDisplayed: false,
       displayedImageURL: "",
+      displayedSubmissionID: null,
+      contestID: 4,
     };
     this.viewAllSubmissions = this.viewAllSubmissions.bind(this)
     this.displayImagePopUp = this.displayImagePopUp.bind(this)
@@ -25,18 +28,19 @@ export class ViewSubmissions extends React.Component {
   }
 
   viewAllSubmissions() {
-    fetch('/contests/2/submissions').then(response =>
+    fetch(`/contests/${this.state.contestID}/submissions/`).then(response =>
       response.json().then(data => {
         this.setState({
           submissions: data.files,
-          submissionKeys: data.fileKeys
+          submissionKeys: data.fileKeys,
+          submissionIDs: data.submissionIDs
         });
       })
     )
   }
 
-  displayImagePopUp(imageURL) {
-    this.setState({ imagePopUpDisplayed: true, displayedImageURL: imageURL })
+  displayImagePopUp(imageURL, submissionID) {
+    this.setState({ imagePopUpDisplayed: true, displayedImageURL: imageURL, displayedSubmissionID: submissionID })
   }
 
   closeImagePopUp() {
@@ -66,12 +70,15 @@ export class ViewSubmissions extends React.Component {
         <ImageDisplayPaper
           submissions={this.state.submissions}
           submissionKeys={this.state.submissionKeys}
+          submissionIDs={this.state.submissionIDs}
           imageClickHandler={this.displayImagePopUp}
         />
         <ImagePopUp
           imagePopUpDisplayed={this.state.imagePopUpDisplayed}
           imageURL={this.state.displayedImageURL}
           closePopUp={this.closeImagePopUp}
+          submissionID={this.state.displayedSubmissionID}
+          contestID={this.state.contestID}
         />
       </div>
     )

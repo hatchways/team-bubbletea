@@ -37,7 +37,7 @@ export class Image extends React.Component {
       <div
         onMouseEnter={this.toggleHover}
         onMouseLeave={this.toggleHover}
-        onClick={() => this.props.imageClickHandler(this.props.imageURL)}>
+        onClick={() => this.props.imageClickHandler(this.props.imageURL, this.props.submissionID)}>
         <img
           width="200px"
           height="200px"
