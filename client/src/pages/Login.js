@@ -88,7 +88,7 @@ class Login extends Component {
                 </a>
               </Typography>
             </Grid>
-              <SignInButton type="submit"/>
+              <SignInButton type="submit" />
           </form>
           <p>{this.state.error}</p>
         </Grid>

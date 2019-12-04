@@ -10,6 +10,7 @@ from database import db
 import jwt
 import json
 import datetime
+from database import db
 
 app = Flask(__name__)
 CORS(app)
@@ -19,10 +20,9 @@ db.init_app(app)
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
 app.register_blueprint(contest_handler, url_prefix="/contests")
-app.register_blueprint(
-    submission_handler, url_prefix="/contests/<int:contest_id>/submissions")
-app.register_blueprint(
-    payment_handler, url_prefix="/users/<int:user_id>/payments")
+app.register_blueprint(payment_handler, url_prefix="/users/<int:user_id>/payments")
+app.register_blueprint(contest_handler, url_prefix='/contests')
+app.register_blueprint(submission_handler, url_prefix='/contests/<int:contest_id>/submissions')
 
 
 # Placeholder secret_key for sessions
