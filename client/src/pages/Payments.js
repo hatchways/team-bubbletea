@@ -56,13 +56,12 @@ var Payments = function () {
                 </Grid>
                 <Grid item xs={9} md={7} lg={12} className={classes.info}>
                     {stripePage === 'creditCard' &&
-                        <div>
-                            <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
-                                <Elements>
-                                    <InjectedCreditCard userID={userID} />
-                                </Elements>
-                            </StripeProvider>
-                        </div>}
+                        <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
+                            <Elements>
+                                <InjectedCreditCard userID={userID} />
+                            </Elements>
+                        </StripeProvider>
+                    }
                     {stripePage === 'transfer' && <Transfer userID={userID} />}
                     {stripePage === 'history' && <History userID={userID} />}
                     {stripePage === 'summary' && <h3>Account Summary</h3>}

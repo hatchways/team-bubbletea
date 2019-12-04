@@ -95,8 +95,8 @@ class CreditCard extends React.Component {
                     {this.state.ccHeader}
                 </div>
                 <form onSubmit={this.handleSubmit} id="payment-form">
-                    <div class="form-row">
-                        <label for="card-element">
+                    <div className="form-row">
+                        <label htmlFor="card-element">
                             Credit or debit card
                     </label>
                         <div id="card-element">
