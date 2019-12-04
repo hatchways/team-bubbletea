@@ -53,17 +53,13 @@ var Payments = function () {
         </div>
     );
 
-    if (stripePage === 'creditCard') {
-        return [optionsMenu, creditCardPage];
-    } else if (stripePage === 'transfer') {
-        return [optionsMenu, <Transfer userID={userID} />];
-    } else if (stripePage === 'chargePayment') {
-        return [optionsMenu, <ChargePayment userID={userID} />];
-    } else if (stripePage === 'refund') {
-        return [optionsMenu, <Refund userID={userID} />];
-    } else {
-        return optionsMenu;
-    }
+    return (
+        {optionsMenu} 
+        {stripePage === 'creditCard' && ({creditCardPage})}
+        {stripePage === 'transfer' && (<Transfer userId={userId}>)}
+        {stripePage === 'chargePayment' && <ChargePayment userID={userID} />}
+        {stripePage === 'refund' && <Refund userID={userID} />}
+    )
 }
 
 export default Payments;
