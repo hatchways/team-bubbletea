@@ -6,6 +6,7 @@ from config import S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_
 from models import User, Submission, Contest
 from datetime import datetime
 from api.payment_handler import send_transfer, charge_payment
+from sqlalchemy.exc import DataError
 
 submission_handler = Blueprint('submission_handler', __name__)
 
@@ -43,11 +44,16 @@ def upload(contest_id):
     file_key = str(uuid.uuid1()) + file.filename
     my_bucket.Object(file_key).put(Body=file)
 
-    submission = Submission(
-        user_id=user_id, contest_id=contest_id, image=file_key)
+    try:
+        submission = Submission(
+            user_id=user_id, contest_id=contest_id, image=file_key)
 
-    db.session.add(submission)
-    db.session.commit()
+        db.session.add(submission)
+        db.session.commit()
+    except (DataError, AssertionError) as e:
+        print(
+            f'Sorry we could not create your submission due to a {type(e).__name__}.')
+        db.session.rollback()
 
     return jsonify({"success": "true"})
 
@@ -67,10 +73,15 @@ def edit(contest_id, submission_id):
 @submission_handler.route('/<int:submission_id>', methods=['PATCH', 'PUT'])
 def update(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
-    # may be a better way to do this than setattr
-    for key in request.json.keys():
-        setattr(submission, key, request.json[key])
-    db.session.commit()
+    try:
+        for key in request.json.keys():
+            setattr(submission, key, request.json[key])
+        db.session.commit()
+    except (DataError, AssertionError) as e:
+        print(
+            f'Sorry we could not update your submission due to a {type(e).__name__}.')
+        db.session.rollback()
+
     return redirect(url_for('submission_handler.show_contest', contest_id=contest_id, submission_id=submission.id))
 
 

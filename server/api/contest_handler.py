@@ -3,6 +3,7 @@ from database import db
 from models import Contest
 from datetime import datetime
 from api.payment_handler import charge_payment
+from sqlalchemy.exc import DataError
 
 contest_handler = Blueprint(
     'contest_handler', __name__)
@@ -24,20 +25,26 @@ def create():
     # just using a dummy user for now, need to create user with id=1 in postgres for this to work
     user_id = 1
 
-    contest = Contest(title=request.json['title'],
-                      description=request.json['description'],
-                      prize=request.json['prize'],
-                      deadline=datetime.strptime(
-                          request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
-                      user_id=user_id)
+    try:
+        contest = Contest(title=request.json['title'],
+                          description=request.json['description'],
+                          prize=request.json['prize'],
+                          deadline=datetime.strptime(
+            request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
+            user_id=user_id)
 
-    db.session.add(contest)
-    db.session.commit()
+        db.session.add(contest)
+        db.session.commit()
 
-    # We are currently charging contest owner when winner is declared,
-    #   but we may want to change it to charge them when contest is
-    #   created
-    # charge_payment(contest.id)
+        # We are currently charging contest owner when winner is declared,
+        #   but we may want to change it to charge them when contest is
+        #   created
+        # charge_payment(contest.id)
+
+    except (DataError, AssertionError) as e:
+        print(
+            f'Sorry we could not create your contest due to a {type(e).__name__}.')
+        db.session.rollback()
 
     return redirect(url_for('contest_handler.show_contest', id=contest.id))
 
@@ -57,10 +64,17 @@ def edit(id):
 @contest_handler.route('/<int:id>', methods=['PATCH', 'PUT'])
 def update(id):
     contest = Contest.query.get_or_404(id)
-    # may be a better way to do this than setattr
-    for key in request.json.keys():
-        setattr(contest, key, request.json[key])
-    db.session.commit()
+
+    try:
+        for key in request.json.keys():
+            setattr(contest, key, request.json[key])
+        db.session.commit()
+
+    except (DataError, AssertionError) as e:
+        print(
+            f'Sorry we could not update your contest due to a {type(e).__name__}.')
+        db.session.rollback()
+
     return redirect(url_for('contest_handler.show_contest', id=id))
 
 

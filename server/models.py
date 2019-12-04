@@ -55,6 +55,11 @@ class Contest(db.Model):
         assert winner_transfer == False or self.owner_payment == True, '''Transfer cannot 
             be made to contest winner since payment has not been received from contest owner.'''
 
+    @validates('prize')
+    def validate_prize(self, key, prize):
+        assert (prize >= 0), "Nice try. This isn't a charity."
+        return prize
+
 
 class Submission(db.Model):
     __tablename__ = 'submission'
