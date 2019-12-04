@@ -87,7 +87,7 @@ def get_payment_history(user_id):
         customer=user.stripe_customer_id)
     return jsonify([{
         'transaction_id': payment['id'],
-        'amount':payment['amount'],
+        'amount':f"$ {payment['amount']/100:.2f}",
         'contest_id':payment['metadata']['contest_id'],
         'contest_title':Contest.query.get_or_404(payment['metadata']['contest_id']).title
     } for payment in payment_intents['data']])
@@ -100,7 +100,7 @@ def get_transfer_history(user_id):
         destination=user.stripe_transfer_id)
     return jsonify([{
         'transaction_id': transfer['id'],
-        'amount':transfer['amount'],
+        'amount':f"$ {transfer['amount']/100:.2f}",
         'contest_id':transfer['metadata']['contest_id'],
         'contest_title':Contest.query.get_or_404(transfer['metadata']['contest_id']).title
     } for transfer in transfers['data']])
