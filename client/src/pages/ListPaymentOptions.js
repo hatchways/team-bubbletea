@@ -2,36 +2,36 @@ import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
+import CreditCardIcon from '@material-ui/icons/CreditCard';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 function ListPaymentOptions(props) {
 
     return (
         <div>
-            <ListItem button onClick={e => props.setStripePage("summary")}>
+            <ListItem button onClick={e => props.setStripePage("profile")}>
                 <ListItemIcon>
-                    <DashboardIcon />
+                    <AccountCircleIcon />
                 </ListItemIcon>
-                <ListItemText primary="Account Summary" />
+                <ListItemText primary="Profile" />
             </ListItem>
             <ListItem button onClick={e => props.setStripePage("creditCard")}>
                 <ListItemIcon>
-                    <ShoppingCartIcon />
+                    <CreditCardIcon />
                 </ListItemIcon>
                 <ListItemText primary="Contest Owner Payments" />
             </ListItem>
             <ListItem button onClick={e => props.setStripePage("transfer")}>
                 <ListItemIcon>
-                    <PeopleIcon />
+                    <AccountBalanceIcon />
                 </ListItemIcon>
                 <ListItemText primary="Tattoo Artist Transfers" />
             </ListItem>
             <ListItem button onClick={e => props.setStripePage("history")}>
                 <ListItemIcon>
-                    <BarChartIcon />
+                    <AttachMoneyIcon />
                 </ListItemIcon>
                 <ListItemText primary="Transaction History" />
             </ListItem>

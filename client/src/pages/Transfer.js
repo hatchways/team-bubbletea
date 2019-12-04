@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Button from '@material-ui/core/Button';
 import { Grid } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
+
 
 var Transfer = function ({ userID }) {
 
@@ -16,18 +18,22 @@ var Transfer = function ({ userID }) {
         })();
     }
 
-    const accountHeader = stripeAccount ? `Stripe Connect Account: ${stripeAccount}` : 'No account added yet';
-
     return (
-        <Grid direction="column">
+        <Grid container direction="column" spacing={3}>
             <Grid item>
-                <Button color="primary" href="https://dashboard.stripe.com/dashboard">
-                    Go to My Account
-                </Button>
+                <Typography variant="h4" component="h4">Use Stripe Connect Account to Receive Transfers</Typography>
             </Grid>
             <Grid item>
-                <Button color="primary" href={OauthLink}>
-                    {stripeAccount ? "Update" : "Add"} Account to Receive Payments
+                {stripeAccount &&
+                    <Button color="inherit" variant="outlined" href="https://dashboard.stripe.com/dashboard">
+                        Go to My Account
+                    </Button>}
+                {!stripeAccount &&
+                    <Typography variant="h6" component="h6">You do not currently have an account</Typography>}
+            </Grid>
+            <Grid item>
+                <Button color="inherit" variant="outlined" href={OauthLink}>
+                    {stripeAccount ? "Change to a new Stripe Connect account" : "Add a Stripe Connect account"}
                 </Button>
             </Grid>
         </Grid>

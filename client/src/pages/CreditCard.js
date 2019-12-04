@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
+import { Grid } from "@material-ui/core";
 
 class CreditCard extends React.Component {
     constructor(props) {
@@ -48,7 +49,7 @@ class CreditCard extends React.Component {
 
 
         if (error) {
-            console.log('ERROR IN CONFIRM CARD SETUP')
+            console.log('Error occurred when confirming card details')
         } else {
             if (setupIntent.status === 'succeeded') {
                 const response = await fetch(`/users/${this.props.userID}/payments/cc/${this.state.ccExists ? 'update' : 'setup'}`, {
@@ -82,49 +83,54 @@ class CreditCard extends React.Component {
 
     render() {
         return (
-            <div>
-                <div>
+            <Grid container spacing={6}>
+                <Grid item xs={6} sm={6} md={6} lg={6}>
                     <Typography variant="h6" component="h6">
-                        By adding your credit card information, you are authorizing Tattoo Art <br />
-                        to charge this card whenever you create a contest.  The charge will be in <br />
-                        the amount of the contest prize.
-                </Typography>
-
-                </div>
+                        By adding your credit card information, you are authorizing Tattoo Art
+                        to charge this card each time you declare a contest winner.  The charge will
+                        be in the amount of the contest prize.
+                    </Typography>
+                </Grid>
                 {this.state.clientSecret &&
-                    <div>
+                    <Grid item xs={6} sm={6} md={6} lg={6}>
+                        <Typography variant="h6" component="h6">
+                            Current Card Details
+                        </Typography>
                         <List>
-                            <ListItem>
-                                <ListItemText primary="Credit card details" />
-                            </ListItem>
                             <ListItem>
                                 <ListItemText primary={`Card number: **** **** **** ${this.state.last4}`} />
                             </ListItem>
                             <ListItem>
-                                <ListItemText primary={`Brand: ${this.state.brand}`} />
+                                <ListItemText primary={`Expiration: ${this.state.expMonth} / ${this.state.expYear}`} />
                             </ListItem>
                             <ListItem>
-                                <ListItemText primary={`Expiration ${this.state.expMonth} / ${this.state.expYear}`} />
+                                <ListItemText primary={`Brand: ${this.state.brand
+                                    && this.state.brand[0].toUpperCase() + this.state.brand.slice(1)}`} />
                             </ListItem>
                         </List>
-                    </div>}
-                <form onSubmit={this.handleSubmit} id="payment-form">
-                    <div className="form-row">
-                        <label htmlFor="card-element">
-                            Credit or debit card
-                    </label>
-                        <div id="card-element">
-                            <CardElement style={this.style} />
-                        </div>
-                        <div id="card-errors" role="alert"></div>
-                        <div>
-                            <Button color="inherit">
-                                {this.state.ccExists ? 'Update' : 'Add'} credit card
-                            </Button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                    </Grid>}
+                <Grid item xs={4} sm={4} md={4} lg={4}>
+                    <form onSubmit={this.handleSubmit} id="payment-form">
+                        <Grid container spacing={3} direction="column" className="form-row">
+                            <Grid item>
+                                <Typography variant="h6" component="h6">
+                                    Enter your credit card details:
+                                </Typography>
+                            </Grid>
+
+                            <Grid item id="card-element">
+                                <CardElement style={this.style} />
+                            </Grid>
+                            <Grid item id="card-errors" role="alert"></Grid>
+                            <Grid item>
+                                <Button color="inherit" variant="outlined">
+                                    {this.state.ccExists ? 'Update' : 'Add'} credit card
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Grid>
+            </Grid>
 
         );
     }

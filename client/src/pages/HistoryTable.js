@@ -29,7 +29,8 @@ function HistoryTable(props) {
             <Table className={classes.table} aria-label="history table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Contest ID</TableCell>
+                        <TableCell>Contest Title</TableCell>
+                        <TableCell align="right">Contest ID</TableCell>
                         <TableCell align="right">Prize</TableCell>
                         {props.transactionType === "payment" && <TableCell align="right"></TableCell>}
                     </TableRow>
@@ -38,11 +39,12 @@ function HistoryTable(props) {
                     {props.history && props.history.map(transaction => (
                         <TableRow key={transaction['contest_id']}>
                             <TableCell component="th" scope="row">
-                                {transaction['contest_id']}
+                                {transaction['contest_title']}
                             </TableCell>
+                            <TableCell align="right">{transaction["contest_id"]}</TableCell>
                             <TableCell align="right">{transaction["amount"]}</TableCell>
                             {props.transactionType === "payment" && <TableCell align="right">
-                                <Button color="primary" onClick={e => props.refundPayment(transaction["id"])}>
+                                <Button color="primary" onClick={e => props.refundPayment(transaction["transaction_id"])}>
                                     Request Refund
                                 </Button>
                             </TableCell>}
