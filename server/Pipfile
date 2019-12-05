@@ -14,6 +14,8 @@ Flask-Script = "*"
 stripe = "*"
 pyjwt = "*"
 flask-cors = "*"
+boto3 = "*"
+Flask-SocketIO = "*"
 
 
 [requires]

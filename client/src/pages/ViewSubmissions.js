@@ -1,5 +1,4 @@
 import React from "react";
-import { Image } from "./Image";
 import { Header } from "./Header";
 import { ContestDetailsPaperSheet } from "./ContestDetailsPaper";
 import { ImageDisplayPaper } from "./ImageDisplayPaper";
@@ -48,16 +47,6 @@ export class ViewSubmissions extends React.Component {
   }
 
   render() {
-    let imagesArray = []
-    for (let i = 0; i < this.state.submissions.length; i++) {
-      imagesArray.push(
-        <Image
-          imageURL={this.state.submissions[i]}
-          imageKey={this.state.submissionKeys[i]}
-          key={i}
-        />
-      )
-    }
     return (
       <div>
         <Header>

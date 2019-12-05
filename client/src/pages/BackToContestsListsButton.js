@@ -5,16 +5,15 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(1),
-  	"margin-right" : "2%",
+    margin: theme.spacing(1)
   },
   input: {
     display: 'none',
   },
   title: {
-  	"font-family" : theme.fontFamily,
-  	"font-size" : "10px",
-  	padding : "5px"
+    fontFamily: theme.fontFamily,
+    fontSize: 10,
+    padding: 5
   }
 }));
 
@@ -22,11 +21,11 @@ export function BackToContestsListButton() {
   const classes = useStyles();
 
   return (
-  	<Button color="inherit" className={classes.button}>
-        <ArrowBackIcon/>
-  	    <Typography className={classes.title} variant="caption">
-            Back to contests' list
+    <Button color="inherit" className={classes.button}>
+      <ArrowBackIcon />
+      <Typography className={classes.title} variant="caption">
+        Back to contests' list
         </Typography>
     </Button>
-    )
+  )
 }

@@ -107,9 +107,10 @@ def get_payment_history(user_id):
         return jsonify({'error': e}), 500
 
     return jsonify([{
-        'id': payment['id'],
-        'amount':payment['amount'],
-        'contest_id':payment['metadata']['contest_id']
+        'transaction_id': payment['id'],
+        'amount':f"$ {payment['amount']/100:.2f}",
+        'contest_id':payment['metadata']['contest_id'],
+        'contest_title':Contest.query.get_or_404(payment['metadata']['contest_id']).title
     } for payment in payment_intents['data']])
 
 
@@ -123,9 +124,10 @@ def get_transfer_history(user_id):
         return jsonify({'error': e}), 500
 
     return jsonify([{
-        'id': transfer['id'],
-        'amount':transfer['amount'],
-        'contest_id':transfer['metadata']['contest_id']
+        'transaction_id': transfer['id'],
+        'amount':f"$ {transfer['amount']/100:.2f}",
+        'contest_id':transfer['metadata']['contest_id'],
+        'contest_title':Contest.query.get_or_404(transfer['metadata']['contest_id']).title
     } for transfer in transfers['data']])
 
 
