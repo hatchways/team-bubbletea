@@ -53,8 +53,8 @@ export class UploadSubmission extends React.Component {
                 <UploadPaper showFileUpload={this.showFileUpload}>
                     <form className="upload-form" method="post" encType="multipart/form-data"/>
                     <input type="file" ref={this.fileUploadRef} onChange={this.handleChangeInUpload} style={{ display: "none" }}/>
+                    <UploadButton type="submit" onClick={this.handleClickUpload}/>
                 </UploadPaper>
-                <UploadButton type="submit" onClick={this.handleClickUpload}/>
                 {this.state.redirect && <Redirect to='/view-contest'/>}
             </div>
         )
