@@ -4,16 +4,15 @@ import { Button, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(1),
-  	"margin-right" : "2%",
+    margin: theme.spacing(1)
   },
   input: {
     display: 'none',
   },
   title: {
-  	"font-family" : theme.fontFamily,
-  	"font-size" : "10px",
-  	padding : "5px"
+    fontFamily: theme.fontFamily,
+    fontSize: 10,
+    padding: 5
   }
 }));
 
@@ -21,10 +20,10 @@ export function SignUpButton() {
   const classes = useStyles();
 
   return (
-  	<Button variant="outlined" color="inherit" className={classes.button}>
-  		<Typography className={classes.title} variant="button">
-        	Sign Up
-        </Typography>
+    <Button variant="outlined" color="inherit" className={classes.button}>
+      <Typography className={classes.title} variant="button">
+        Sign Up
+      </Typography>
     </Button>
-    )
+  )
 }

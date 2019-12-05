@@ -2,12 +2,14 @@ import React from 'react';
 import { Header } from "./Header";
 import { UploadPaper } from "./UploadPaper"; 
 import { UploadButton } from "./UploadButton";
+import { Redirect } from 'react-router-dom'; 
 
 export class UploadSubmission extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             files: null,
+            redirect: false,
         }
         this.fileUploadRef = React.createRef()
         this.handleChangeInUpload = this.handleChangeInUpload.bind(this)
@@ -34,7 +36,7 @@ export class UploadSubmission extends React.Component {
             })
             .then(response => {
                 console.log(response)
-                // redirect back to the contest page that the submission was for
+                this.setState({ redirect: true })
             })
             .catch(error => {
                 console.log(error)
@@ -51,8 +53,9 @@ export class UploadSubmission extends React.Component {
                 <UploadPaper showFileUpload={this.showFileUpload}>
                     <form className="upload-form" method="post" encType="multipart/form-data"/>
                     <input type="file" ref={this.fileUploadRef} onChange={this.handleChangeInUpload} style={{ display: "none" }}/>
+                    <UploadButton type="submit" onClick={this.handleClickUpload}/>
                 </UploadPaper>
-                <UploadButton type="submit" onClick={this.handleClickUpload}/>
+                {this.state.redirect && <Redirect to='/view-contest'/>}
             </div>
         )
     }

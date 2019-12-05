@@ -4,18 +4,18 @@ import { Paper, Grid, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    padding: "10%",
-    "padding-bottom": "5%",
-    "box-shadow" : 
-    "0px 2px 5px 1px rgba(209, 209, 209, 0.9), 0px 2px 5px -1px rgba(209, 209, 209, 0.9), 0px 1px 5px 0px rgba(209, 209, 209, 0.9), 0px 1px 5px 0px rgba(209, 209, 209, 0.9)", 
+    padding: theme.spacing(5),
+    paddingBottom: theme.spacing(3),
+    boxShadow:
+      "0px 2px 5px 1px rgba(209, 209, 209, 0.9), 0px 2px 5px -1px rgba(209, 209, 209, 0.9), 0px 1px 5px 0px rgba(209, 209, 209, 0.9), 0px 1px 5px 0px rgba(209, 209, 209, 0.9)",
   },
   position: {
-    "margin-right": "2%",
-    "margin-left" : "2%", 
-    "margin-top" : "45px",
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    marginTop: 45,
   },
   header: {
-    "margin-bottom" : "30px"
+    marginBottom: 30
   }
 }));
 
@@ -23,17 +23,17 @@ export function SignInPaper(props) {
   const classes = useStyles();
 
   return (
-  <Grid container justify="center">
-    <Grid item xs={9} md={7} lg={5} className={classes.position}>
-      <Paper className={classes.paper}>
+    <Grid container justify="center">
+      <Grid item xs={9} md={7} lg={5} className={classes.position}>
+        <Paper className={classes.paper}>
           <Grid item className={classes.header}>
             <Typography variant="h4" align="center">
-              Sign In 
+              Sign In
             </Typography>
           </Grid>
-        {props.children}
-      </Paper>
+          {props.children}
+        </Paper>
+      </Grid>
     </Grid>
-  </Grid>
   );
 }
