@@ -31,12 +31,17 @@ def get_transfer_info(user_id):
 def get_cc_info(user_id):
     intent = stripe.SetupIntent.create()
     user = User.query.get_or_404(user_id)
-    if user.stripe_customer_id:
-        payment_methods = stripe.PaymentMethod.list(
-            customer=f'{user.stripe_customer_id}',
-            type='card',
-        )
-        credit_card = payment_methods['data'][0]['card']
+
+    try:
+        if user.stripe_customer_id:
+            payment_methods = stripe.PaymentMethod.list(
+                customer=f'{user.stripe_customer_id}',
+                type='card',
+            )
+            credit_card = payment_methods['data'][0]['card']
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
+
     cc_data = {
         'client_secret': intent.client_secret,
         'last4': credit_card['last4'] if user.stripe_customer_id else None,
