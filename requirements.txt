@@ -5,3 +5,4 @@ psycopg2
 PyJWT
 Boto3
 uuid
+stripe 
