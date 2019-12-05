@@ -47,15 +47,13 @@ export class Image extends React.Component {
         />
         {this.state.hover &&
           <div style={{
-            width: "30%",
-            height: "5%",
-            top: "41%",
-            left: "30%",
+            top: 80,
+            left: 60,
             position: "absolute",
             textAlign: "center"
           }}>
             <div style={{
-              fontSize: "16px"
+              fontSize: 16
             }}>
               <Button variant="contained">Expand</Button>
             </div>

@@ -64,12 +64,12 @@ class Login extends Component {
   render() {
     return (
       <div>
-      <Header>
-      <SignUpButton/>
-      </Header>
-      <SignInPaper>
-        <Grid container direction="column" alignContent="center">
-          <form onSubmit={this.handleFormSubmit}>
+        <Header>
+          <SignUpButton />
+        </Header>
+        <SignInPaper>
+          <Grid container direction="column" alignContent="center">
+            <form onSubmit={this.handleFormSubmit}>
               <BasicTextField
                 label="Email Address"
                 value={this.state.email}
@@ -81,18 +81,19 @@ class Login extends Component {
                 value={this.state.password}
                 onChange={e => this.handlePasswordChange(e.target.value)}
               />
-            <Grid item>
-              <Typography variant="caption" color="primary">
-                <a href=""> 
-                  Forgot Your Password?
-                </a>
-              </Typography>
-            </Grid>
+              <Grid item>
+                <Typography variant="caption" color="primary">
+                  {/* add functionality for forgetting password */}
+                  <a href="">
+                    Forgot Your Password?
+                  </a>
+                </Typography>
+              </Grid>
               <SignInButton type="submit" />
-          </form>
-          <p>{this.state.error}</p>
-        </Grid>
-      </SignInPaper>
+            </form>
+            <p>{this.state.error}</p>
+          </Grid>
+        </SignInPaper>
       </div>
     )
   }
