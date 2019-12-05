@@ -22,7 +22,7 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/payments-demo" component={Payments} />
           <Route path="/upload-submission" component={UploadSubmission} />
-          <Route path="/view-submission" component={ViewSubmissions} />
+          <Route path="/view-submissions" component={ViewSubmissions} />
           <Route path="/view-contest" component={ViewContest} />
         </Switch>
       </BrowserRouter>
