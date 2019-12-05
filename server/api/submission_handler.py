@@ -51,9 +51,8 @@ def upload(contest_id):
         db.session.add(submission)
         db.session.commit()
     except (DataError, AssertionError) as e:
-        print(
-            f'Sorry we could not create your submission due to a {type(e).__name__}.')
         db.session.rollback()
+        return jsonify({'error': e}), 500
 
     return jsonify({"success": "true"})
 
@@ -78,9 +77,8 @@ def update(contest_id, submission_id):
             setattr(submission, key, request.json[key])
         db.session.commit()
     except (DataError, AssertionError) as e:
-        print(
-            f'Sorry we could not update your submission due to a {type(e).__name__}.')
         db.session.rollback()
+        return jsonify({'error': e}), 500
 
     return redirect(url_for('submission_handler.show_contest', contest_id=contest_id, submission_id=submission.id))
 
@@ -88,25 +86,32 @@ def update(contest_id, submission_id):
 @submission_handler.route('/<int:submission_id>', methods=['DELETE'])
 def delete(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
-    db.session.delete(submission)
-    db.session.commit()
+    try:
+        db.session.delete(submission)
+        db.session.commit()
+    except (DataError, AssertionError) as e:
+        db.session.rollback()
+        return jsonify({'error': e}), 500
     return redirect(url_for('submission_handler.show_all', contest_id=contest_id))
 
 
 @submission_handler.route('/winner', methods=['POST'])
 def declare_winner(contest_id):
     submission = Submission.query.get_or_404(request.json['submission_id'])
-    submission.winner = True
-    charge_payment(contest_id)
-    send_transfer(contest_id)
-    db.session.commit()
+    try:
+        submission.winner = True
+        charge_payment(contest_id)
+        send_transfer(contest_id)
+        db.session.commit()
+    except (DataError, AssertionError) as e:
+        db.session.rollback()
+        return jsonify({'error': e}), 500
     return jsonify({'success': 'contest winner added to db'})
 
 
 @submission_handler.route('/download', methods=['POST'])
 def download(contest_id):
     key = request.json['key']
-
     s3_resource = boto3.resource('s3')
     my_bucket = s3_resource.Bucket(S3_BUCKET)
 

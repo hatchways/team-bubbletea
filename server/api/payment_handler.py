@@ -6,6 +6,7 @@ from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_C
 from uuid import uuid4
 import stripe
 import secrets
+from sqlalchemy.exc import DataError
 
 stripe.api_key = STRIPE_SECRET_KEY_TEST
 
@@ -57,9 +58,12 @@ def get_cc_info(user_id):
 def setup_cc_details(user_id):
     user = User.query.get_or_404(user_id)
 
-    customer = stripe.Customer.create(
-        payment_method=request.json['payment_method_id']
-    )
+    try:
+        customer = stripe.Customer.create(
+            payment_method=request.json['payment_method_id']
+        )
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
 
     user.stripe_customer_id = customer["id"]
     db.session.commit()
@@ -71,25 +75,37 @@ def setup_cc_details(user_id):
 def update_cc_details(user_id):
     user = User.query.get_or_404(user_id)
 
-    payment_methods = stripe.PaymentMethod.list(
-        customer=f'{user.stripe_customer_id}',
-        type='card',
-    )
-    credit_card_id = payment_methods['data'][0]['id']
-    stripe.PaymentMethod.detach(credit_card_id)
+    try:
+        payment_methods = stripe.PaymentMethod.list(
+            customer=f'{user.stripe_customer_id}',
+            type='card',
+        )
+        credit_card_id = payment_methods['data'][0]['id']
+        stripe.PaymentMethod.detach(credit_card_id)
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e, 'message': 'Failed when deleting previous credit card'}), 500
 
-    stripe.PaymentMethod.attach(
-        request.json['payment_method_id'],
-        customer=user.stripe_customer_id,
-    )
+    try:
+        stripe.PaymentMethod.attach(
+            request.json['payment_method_id'],
+            customer=user.stripe_customer_id,
+        )
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e, 'message': 'Failed to accept new credit card details'}), 500
+
     return jsonify({'Success': 'Credit card updated'})
 
 
 @payment_handler.route('/cc/history')
 def get_payment_history(user_id):
     user = User.query.get_or_404(user_id)
-    payment_intents = stripe.PaymentIntent.list(
-        customer=user.stripe_customer_id)
+
+    try:
+        payment_intents = stripe.PaymentIntent.list(
+            customer=user.stripe_customer_id)
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
+
     return jsonify([{
         'id': payment['id'],
         'amount':payment['amount'],
@@ -100,8 +116,12 @@ def get_payment_history(user_id):
 @payment_handler.route('/transfers/history')
 def get_transfer_history(user_id):
     user = User.query.get_or_404(user_id)
-    transfers = stripe.Transfer.list(
-        destination=user.stripe_transfer_id)
+    try:
+        transfers = stripe.Transfer.list(
+            destination=user.stripe_transfer_id)
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
+
     return jsonify([{
         'id': transfer['id'],
         'amount':transfer['amount'],
@@ -111,23 +131,33 @@ def get_transfer_history(user_id):
 
 @payment_handler.route('/cc/refund', methods=['POST'])
 def refund_owner(user_id):
-    payment_intent = stripe.PaymentIntent.retrieve(
-        request.json['payment_intent_id'])
-    stripe.Refund.create(payment_intent=payment_intent.id)
+    try:
+        payment_intent = stripe.PaymentIntent.retrieve(
+            request.json['payment_intent_id'])
+        stripe.Refund.create(payment_intent=payment_intent.id)
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e, 'message': 'Failed to process refund'}), 500
+
     contest = Contest.query.get_or_404(
         payment_intent['metadata']['contest_id'])
+
     contest.owner_payment = False
     db.session.commit()
+
     return jsonify({'Success': 'Refund processed'})
 
 
 def charge_payment(contest_id):
     contest = Contest.query.get_or_404(contest_id)
 
-    payment_methods = stripe.PaymentMethod.list(
-        customer=f'{contest.owner.stripe_customer_id}',
-        type='card',
-    )
+    try:
+        payment_methods = stripe.PaymentMethod.list(
+            customer=f'{contest.owner.stripe_customer_id}',
+            type='card',
+        )
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
+
     credit_card_id = payment_methods['data'][0]['id']
 
     try:
@@ -146,8 +176,7 @@ def charge_payment(contest_id):
         db.session.commit()
 
     except stripe.error.CardError as e:
-        err = e.error
-        print("Code is: %s" % err.code)
+        return jsonify({'error': e, 'message': 'Failed to charge credit card'})
 
     return jsonify({'Success': 'Payment charged'})
 
@@ -156,14 +185,23 @@ def send_transfer(contest_id):
     submission = Submission.query.filter_by(
         contest_id=contest_id, winner=True).first()
 
-    stripe.Transfer.create(
-        amount=int(submission.contest.prize*100),
-        currency='usd',
-        destination=submission.artist.stripe_transfer_id,
-        metadata={'contest_id': submission.contest.id}
-    )
+    try:
+        submission.contest.winner_transfer = True
+        db.session.commit()
 
-    submission.contest.winner_transfer = True
-    db.session.commit()
+        stripe.Transfer.create(
+            amount=int(submission.contest.prize*100),
+            currency='usd',
+            destination=submission.artist.stripe_transfer_id,
+            metadata={'contest_id': submission.contest.id}
+        )
+
+    except (DataError, AssertionError) as e:
+        db.session.rollback()
+        return jsonify({'error': e,
+                        'message': 'Transfer not sent because winner could not be declared'}), 500
+
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
 
     return jsonify({'Success': 'Payment received'})

@@ -12,10 +12,13 @@ stripe.api_key = STRIPE_SECRET_KEY_TEST
 @oauth_handler.route('', methods=['GET', 'POST'])
 def setup_transfer_details():
     user = User.query.get_or_404(request.args['state'])
-    response = stripe.OAuth.token(
-        grant_type='authorization_code',
-        code=request.args['code'],
-    )
+    try:
+        response = stripe.OAuth.token(
+            grant_type='authorization_code',
+            code=request.args['code'],
+        )
+    except stripe.error.StripeError as e:
+        return jsonify({'error': e}), 500
 
     user.stripe_transfer_id = response['stripe_user_id']
     db.session.commit()

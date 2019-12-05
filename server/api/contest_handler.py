@@ -42,9 +42,8 @@ def create():
         # charge_payment(contest.id)
 
     except (DataError, AssertionError) as e:
-        print(
-            f'Sorry we could not create your contest due to a {type(e).__name__}.')
         db.session.rollback()
+        return jsonify({'error': e}), 500
 
     return redirect(url_for('contest_handler.show_contest', id=contest.id))
 
@@ -71,9 +70,8 @@ def update(id):
         db.session.commit()
 
     except (DataError, AssertionError) as e:
-        print(
-            f'Sorry we could not update your contest due to a {type(e).__name__}.')
         db.session.rollback()
+        return jsonify({'error': e}), 500
 
     return redirect(url_for('contest_handler.show_contest', id=id))
 
@@ -81,6 +79,10 @@ def update(id):
 @contest_handler.route('/<int:id>', methods=['DELETE'])
 def delete(id):
     contest = Contest.query.get_or_404(id)
-    db.session.delete(contest)
-    db.session.commit()
+    try:
+        db.session.delete(contest)
+        db.session.commit()
+    except (DataError, AssertionError) as e:
+        db.session.rollback()
+        return jsonify({'error': e}), 500
     return redirect(url_for('contest_handler.show_all'))
