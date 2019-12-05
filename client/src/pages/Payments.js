@@ -4,7 +4,6 @@ import InjectedCreditCard from "./CreditCard";
 import History from "./History";
 import Transfer from "./Transfer";
 import ListPaymentOptions from "./ListPaymentOptions"
-import List from '@material-ui/core/List';
 import { Header } from './Header';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Grid, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
@@ -28,6 +27,7 @@ var Payments = function () {
     const classes = useStyles();
 
     const [stripePage, setStripePage] = useState(null);
+    const stripePublishableKey = "pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx"
 
     let userID = 1;
 
@@ -37,12 +37,12 @@ var Payments = function () {
             <Grid container component="main" className={classes.root}>
                 <CssBaseline />
                 <Grid item xs={3} sm={3} md={3} >
-                    <List><ListPaymentOptions setStripePage={setStripePage} /></List>
+                    <ListPaymentOptions setStripePage={setStripePage} />
                 </Grid>
                 <Grid item xs={9} sm={9} md={9} component={Paper} elevation={6} square>
                     <div className={classes.paper}>
                         {stripePage === 'creditCard' &&
-                            <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
+                            <StripeProvider apiKey={stripePublishableKey}>
                                 <Elements>
                                     <InjectedCreditCard userID={userID} />
                                 </Elements>

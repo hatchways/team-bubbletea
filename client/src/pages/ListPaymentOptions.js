@@ -6,36 +6,37 @@ import CreditCardIcon from '@material-ui/icons/CreditCard';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import List from '@material-ui/core/List';
 
-function ListPaymentOptions(props) {
+function ListPaymentOptions({ setStripePage }) {
 
     return (
-        <div>
-            <ListItem button onClick={e => props.setStripePage("profile")}>
+        <List>
+            <ListItem button onClick={e => setStripePage("profile")}>
                 <ListItemIcon>
                     <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText primary="Profile" />
             </ListItem>
-            <ListItem button onClick={e => props.setStripePage("creditCard")}>
+            <ListItem button onClick={e => setStripePage("creditCard")}>
                 <ListItemIcon>
                     <CreditCardIcon />
                 </ListItemIcon>
                 <ListItemText primary="Contest Owner Payments" />
             </ListItem>
-            <ListItem button onClick={e => props.setStripePage("transfer")}>
+            <ListItem button onClick={e => setStripePage("transfer")}>
                 <ListItemIcon>
                     <AccountBalanceIcon />
                 </ListItemIcon>
                 <ListItemText primary="Tattoo Artist Transfers" />
             </ListItem>
-            <ListItem button onClick={e => props.setStripePage("history")}>
+            <ListItem button onClick={e => setStripePage("history")}>
                 <ListItemIcon>
                     <AttachMoneyIcon />
                 </ListItemIcon>
                 <ListItemText primary="Transaction History" />
             </ListItem>
-        </div>
+        </List>
     );
 }
 

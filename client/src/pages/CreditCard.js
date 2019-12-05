@@ -26,12 +26,14 @@ class CreditCard extends React.Component {
         (async () => {
             const response = await fetch(`/users/${this.props.userID}/payments/cc/info`);
             const data = await response.json();
-            this.setState({ clientSecret: await data['client_secret'] });
-            this.setState({ last4: await data['last4'] });
-            this.setState({ brand: await data['brand'] });
-            this.setState({ expMonth: await data['exp_month'] });
-            this.setState({ expYear: await data['exp_year'] });
-            this.setState({ ccExists: await this.state.last4 ? true : false });
+            this.setState({
+                clientSecret: data['client_secret'],
+                last4: data['last4'],
+                brand: data['brand'],
+                expMonth: data['exp_month'],
+                expYear: data['exp_year'],
+                ccExists: data['last4'] ? true : false
+            });
         })();
     }
 
