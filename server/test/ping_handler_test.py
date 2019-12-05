@@ -13,8 +13,8 @@ class PingHandlerTest(TestBase):
 
     def test_user_is_on_team(self):
         response = self.api.post('/ping',
-                                 data=json.dumps({'teamName': 'Shums'}))
+                                 data=json.dumps({'teamName': 'John'}))
 
         self.assertDictEqual(
             response.json,
-            {'response': 'Shums is now part of the team'})
+            {'response': 'John is now part of the team'})

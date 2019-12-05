@@ -2,10 +2,10 @@ import os
 
 TEAM_NAME = os.environ['TEAM_NAME']
 
-S3_BUCKET_REGION=os.environ.get("S3_BUCKET_REGION")
-S3_BUCKET=os.environ.get("S3_BUCKET")
-S3_ACCESS_KEY_ID=os.environ.get("S3_ACCESS_KEY_ID")
-S3_SECRET_ACCESS_KEY=os.environ.get("S3_SECRET_ACCESS_KEY")
+S3_BUCKET_REGION = os.environ.get("S3_BUCKET_REGION")
+S3_BUCKET = os.environ.get("S3_BUCKET")
+S3_ACCESS_KEY_ID = os.environ.get("S3_ACCESS_KEY_ID")
+S3_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_ACCESS_KEY")
 
 POSTGRES_URL = os.environ["POSTGRES_URL"]
 POSTGRES_USERNAME = os.environ["POSTGRES_USERNAME"]
