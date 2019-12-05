@@ -18,22 +18,6 @@ class LandingPage extends Component {
     step: 0
   };
 
-  componentDidMount() {
-    fetch("/welcome")
-      .then(res => {
-        console.log(res);
-        if (res.status === 200) return res.json();
-        else throw Error("Couldn't connect to the server");
-      })
-      .then(res => {
-        this.setState({ welcomeMessage: res.welcomeMessage });
-        this.incrementStep();
-      })
-      .catch(err => {
-        console.log(err.message);
-      });
-  }
-
   incrementStep = () => {
     this.setState(prevState => ({ step: (prevState.step += 1) }));
   };
@@ -42,9 +26,9 @@ class LandingPage extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.landingContainer}>
-        {localStorage.getItem('token') ? 
-        (<p>You are logged in with token {localStorage.getItem('token')} </p>) : 
-        (<p>You are not logged in!</p>)
+        {localStorage.getItem('token') ?
+          (<p>You are logged in with token {localStorage.getItem('token')} </p>) :
+          (<p>You are not logged in!</p>)
         }
         <Typography>{this.state.welcomeMessage}</Typography>
         {this.state.step >= 1 && (
