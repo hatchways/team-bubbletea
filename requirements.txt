@@ -6,3 +6,4 @@ PyJWT
 Boto3
 uuid
 stripe 
+Flask-SocketIO
