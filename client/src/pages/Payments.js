@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import InjectedCreditCard from "./CreditCard";
 import ChargePayment from "./ChargePayment";
@@ -54,11 +54,13 @@ var Payments = function () {
     );
 
     return (
-        {optionsMenu} 
-        {stripePage === 'creditCard' && ({creditCardPage})}
-        {stripePage === 'transfer' && (<Transfer userId={userId}>)}
-        {stripePage === 'chargePayment' && <ChargePayment userID={userID} />}
-        {stripePage === 'refund' && <Refund userID={userID} />}
+        <Fragment>
+            {optionsMenu}
+            {stripePage === 'creditCard' && ({ creditCardPage })}
+            {stripePage === 'transfer' && (<Transfer userId={userId} />)}
+            {stripePage === 'chargePayment' && <ChargePayment userID={userID} />}
+            {stripePage === 'refund' && <Refund userID={userID} />}
+        </Fragment>
     )
 }
 
