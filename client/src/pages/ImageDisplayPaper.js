@@ -22,7 +22,8 @@ export function ImageDisplayPaper(props) {
             <ImagesGrid
               imageClickHandler={props.imageClickHandler}
               submissions={props.submissions}
-              submissionKeys={props.submissionKeys} />
+              submissionKeys={props.submissionKeys}
+              submissionIDs={props.submissionIDs} />
           </Grid>
         </Paper>
       </Grid>

@@ -8,6 +8,7 @@ import Payments from "./pages/Payments";
 import Login from "./pages/Login";
 import { UploadSubmission } from './pages/UploadSubmission';
 import { ViewSubmissions } from './pages/ViewSubmissions';
+import Payments from './pages/Payments';
 import { ViewContest } from './pages/ViewContest';
 
 import "./App.css";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/payments-demo" component={Payments} />
           <Route path="/upload-submission" component={UploadSubmission} />
           <Route path="/view-submissions" component={ViewSubmissions} />
+          <Route path="/payments-demo" component={Payments} />
           <Route path="/view-contest" component={ViewContest} />
         </Switch>
       </BrowserRouter>

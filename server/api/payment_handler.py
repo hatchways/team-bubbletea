@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
-from models import User, Payment
+from models import User, Contest, Submission
 from datetime import datetime
 from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_CLIENT_ID_TEST, REDIRECT_URI_BASE
 from uuid import uuid4
@@ -12,39 +12,40 @@ stripe.api_key = STRIPE_SECRET_KEY_TEST
 payment_handler = Blueprint('payment_handler', __name__)
 
 
-@payment_handler.route('/oauth')
-def get_oauth_link(user_id):
-    state_value = secrets.token_urlsafe()
-    # redirect_uri = 'http://localhost:3000/payments-demo'
-    redirect_uri = '{REDIRECT_URI_BASE}/users/1/payments/transfers/setup'
+@payment_handler.route('/transfers/info')
+def get_transfer_info(user_id):
+    redirect_uri = f'{REDIRECT_URI_BASE}/oauth'
     Oauth_link = (f'https://connect.stripe.com/express/oauth/authorize?' +
                   f'redirect_uri={redirect_uri}&' +
                   f'client_id={STRIPE_CLIENT_ID_TEST}&' +
-                  f'state={state_value}&' +
+                  f'state={user_id}&' +
                   f'stripe_user[business_type]=individual&' +
                   f'suggested_capabilities[]=transfers')
 
-    return jsonify({'Oauth_link': Oauth_link})
-
-
-@payment_handler.route('/secret')
-def get_client_secret(user_id):
-    intent = stripe.SetupIntent.create()
-    print('python cli secret', intent.client_secret)
-    return jsonify({'client_secret': intent.client_secret})
-
-
-@payment_handler.route('/transfers/setup', methods=['GET', 'POST'])
-def setup_transfer_details(user_id):
     user = User.query.get_or_404(user_id)
-    response = stripe.OAuth.token(
-        grant_type='authorization_code',
-        code=request.args['code'],
-    )
 
-    user.stripe_transfer_id = response['stripe_user_id']
-    db.session.commit()
-    return jsonify({'Success': 'Bank account added and can receive transfers'})
+    return jsonify({'Oauth_link': Oauth_link, 'stripe_acct': user.stripe_transfer_id})
+
+
+@payment_handler.route('/cc/info')
+def get_cc_info(user_id):
+    intent = stripe.SetupIntent.create()
+    user = User.query.get_or_404(user_id)
+    if user.stripe_customer_id:
+        payment_methods = stripe.PaymentMethod.list(
+            customer=f'{user.stripe_customer_id}',
+            type='card',
+        )
+        credit_card = payment_methods['data'][0]['card']
+    cc_data = {
+        'client_secret': intent.client_secret,
+        'last4': credit_card['last4'] if user.stripe_customer_id else None,
+        'brand': credit_card['brand'] if user.stripe_customer_id else None,
+        'exp_month': credit_card['exp_month'] if user.stripe_customer_id else None,
+        'exp_year': credit_card['exp_year'] if user.stripe_customer_id else None
+    }
+
+    return jsonify(cc_data)
 
 
 @payment_handler.route('/cc/setup', methods=['POST'])
@@ -78,65 +79,88 @@ def update_cc_details(user_id):
     )
     return jsonify({'Success': 'Credit card updated'})
 
-# owner creates contest and makes payment, which will later be sent to winner
-@payment_handler.route('/cc/pay', methods=['POST'])
-def charge_payment(user_id):
+
+@payment_handler.route('/cc/history')
+def get_payment_history(user_id):
     user = User.query.get_or_404(user_id)
+    payment_intents = stripe.PaymentIntent.list(
+        customer=user.stripe_customer_id)
+    return jsonify([{
+        'transaction_id': payment['id'],
+        'amount':f"$ {payment['amount']/100:.2f}",
+        'contest_id':payment['metadata']['contest_id'],
+        'contest_title':Contest.query.get_or_404(payment['metadata']['contest_id']).title
+    } for payment in payment_intents['data']])
+
+
+@payment_handler.route('/transfers/history')
+def get_transfer_history(user_id):
+    user = User.query.get_or_404(user_id)
+    transfers = stripe.Transfer.list(
+        destination=user.stripe_transfer_id)
+    return jsonify([{
+        'transaction_id': transfer['id'],
+        'amount':f"$ {transfer['amount']/100:.2f}",
+        'contest_id':transfer['metadata']['contest_id'],
+        'contest_title':Contest.query.get_or_404(transfer['metadata']['contest_id']).title
+    } for transfer in transfers['data']])
+
+
+@payment_handler.route('/cc/refund', methods=['POST'])
+def refund_owner(user_id):
+    payment_intent = stripe.PaymentIntent.retrieve(
+        request.json['payment_intent_id'])
+    stripe.Refund.create(payment_intent=payment_intent.id)
+    contest = Contest.query.get_or_404(
+        payment_intent['metadata']['contest_id'])
+    contest.owner_payment = False
+    db.session.commit()
+    return jsonify({'Success': 'Refund processed'})
+
+
+def charge_payment(contest_id):
+    contest = Contest.query.get_or_404(contest_id)
 
     payment_methods = stripe.PaymentMethod.list(
-        customer=f'{user.stripe_customer_id}',
+        customer=f'{contest.owner.stripe_customer_id}',
         type='card',
     )
     credit_card_id = payment_methods['data'][0]['id']
 
     try:
-        payment_intent = stripe.PaymentIntent.create(
-            amount=request.json['amount'],
+        stripe.PaymentIntent.create(
+            amount=int(contest.prize*100),
             currency='usd',
-            customer=user.stripe_customer_id,
+            customer=contest.owner.stripe_customer_id,
             payment_method=credit_card_id,
             off_session=True,
             confirm=True,
-            metadata={'contest_id': request.json['contest_id']},
+            metadata={'contest_id': contest.id},
             idempotency_key=str(uuid4())
         )
-        payment = Payment(
-            user_id=user.id, payment_intent_id=payment_intent['id'])
-        db.session.add(payment)
+
+        contest.owner_payment = True
         db.session.commit()
 
     except stripe.error.CardError as e:
         err = e.error
-        # Error code will be authentication_required if authentication is needed
         print("Code is: %s" % err.code)
-        payment_intent_id = err.payment_intent['id']
-        payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
 
     return jsonify({'Success': 'Payment charged'})
 
 
-@payment_handler.route('/transfers/receive', methods=['POST'])
-def receive_payment(user_id):
-    user = User.query.get_or_404(user_id)
+def send_transfer(contest_id):
+    submission = Submission.query.filter_by(
+        contest_id=contest_id, winner=True).first()
 
     stripe.Transfer.create(
-        amount=request.json['amount'],
+        amount=int(submission.contest.prize*100),
         currency='usd',
-        destination=user.stripe_transfer_id,
+        destination=submission.artist.stripe_transfer_id,
+        metadata={'contest_id': submission.contest.id}
     )
+
+    submission.contest.winner_transfer = True
+    db.session.commit()
+
     return jsonify({'Success': 'Payment received'})
-
-
-@payment_handler.route('/cc/refund', methods=['POST'])
-def refund_owner(user_id):
-    stripe.Refund.create(
-        payment_intent=request.json['payment_intent_id']
-    )
-    return jsonify({'Success': 'Refund processed'})
-
-
-@payment_handler.route('/cc/charges')
-def get_payments(user_id):
-    user = User.query.get_or_404(user_id)
-    payments = Payment.query.filter_by(user_id=user.id).all()
-    return jsonify([payment['id'] for payment in payments])
