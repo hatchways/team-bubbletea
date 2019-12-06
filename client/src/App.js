@@ -8,7 +8,6 @@ import Payments from "./pages/Payments";
 import Login from "./pages/Login";
 import { UploadSubmission } from './pages/UploadSubmission';
 import { ViewSubmissions } from './pages/ViewSubmissions';
-import Payments from './pages/Payments';
 import { ViewContest } from './pages/ViewContest';
 
 import "./App.css";
