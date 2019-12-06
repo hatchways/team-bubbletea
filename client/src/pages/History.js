@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import HistoryTable from "./HistoryTable"
+import Typography from '@material-ui/core/Typography';
+import { Grid } from "@material-ui/core";
 
 var History = function ({ userID }) {
 
@@ -33,37 +36,16 @@ var History = function ({ userID }) {
     }
 
     return (
-        <div>
-            <div>
-                <h3>Payment History</h3>
-                <table>
-                    {
-                        paymentHistory &&
-                        paymentHistory.map((payment) =>
-                            <tr>
-                                <td>Contest {payment['contest_id']}</td>
-                                <td>{payment['amount']} Prize</td>
-                                <td><button type="submit" onClick={() => refundPayment(payment['id'])}>Refund Payment</button></td>
-                            </tr>
-                        )
-                    }
-                </table>
-            </div>
-            <div>
-                <h3>Transfer History</h3>
-                <table>
-                    {
-                        transferHistory &&
-                        transferHistory.map((transfer) =>
-                            <tr>
-                                <td>Contest {transfer['contest_id']}</td>
-                                <td>{transfer['amount']} Prize</td>
-                            </tr>
-                        )
-                    }
-                </table>
-            </div>
-        </div>
+        <Grid container spacing={6}>
+            <Grid item>
+                <Typography variant="h6" component="h6">Payments as a Contest Owner</Typography>
+                <HistoryTable history={paymentHistory} refundPayment={refundPayment} transactionType={"payment"} />
+            </Grid>
+            <Grid item>
+                <Typography variant="h6" component="h6">Transfers Received as Contest Winner</Typography>
+                <HistoryTable history={transferHistory} refundPayment={refundPayment} transactionType={"transfer"} />
+            </Grid>
+        </Grid>
     );
 };
 

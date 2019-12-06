@@ -1,5 +1,11 @@
 import React from "react";
 import { CardElement, injectStripe } from 'react-stripe-elements';
+import { makeStyles, Typography } from '@material-ui/core';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List';
+import Button from '@material-ui/core/Button';
+import { Grid } from "@material-ui/core";
 
 class CreditCard extends React.Component {
     constructor(props) {
@@ -20,21 +26,15 @@ class CreditCard extends React.Component {
         (async () => {
             const response = await fetch(`/users/${this.props.userID}/payments/cc/info`);
             const data = await response.json();
-            this.setState({ clientSecret: await data['client_secret'] });
-            this.setState({ last4: await data['last4'] });
-            this.setState({ brand: await data['brand'] });
-            this.setState({ expMonth: await data['exp_month'] });
-            this.setState({ expYear: await data['exp_year'] });
-            this.setState({ ccExists: await this.state.last4 ? true : false })
-            this.setState({ ccHeader: await this.state.clientSecret ? <h4>{this.makeHeader()}</h4> : <h6>No credit card added yet</h6> })
+            this.setState({
+                clientSecret: data['client_secret'],
+                last4: data['last4'],
+                brand: data['brand'],
+                expMonth: data['exp_month'],
+                expYear: data['exp_year'],
+                ccExists: data['last4'] ? true : false
+            });
         })();
-    }
-
-    makeHeader() {
-        return `Credit card details \n
-                Card number: **** **** **** ${this.state.last4}\n
-                Brand: ${this.state.brand}\n
-                Expiration ${this.state.expMonth} / ${this.state.expYear}`
     }
 
     handleSubmit = async (ev) => {
@@ -51,7 +51,7 @@ class CreditCard extends React.Component {
 
 
         if (error) {
-            console.log('ERROR IN CONFIRM CARD SETUP')
+            console.log('Error occurred when confirming card details')
         } else {
             if (setupIntent.status === 'succeeded') {
                 const response = await fetch(`/users/${this.props.userID}/payments/cc/${this.state.ccExists ? 'update' : 'setup'}`, {
@@ -85,28 +85,54 @@ class CreditCard extends React.Component {
 
     render() {
         return (
-            <div>
-                <div>
-                    By adding your credit card information, you are authorizing Tattoo Art <br />
-                    to charge this card whenever you create a contest.  The charge will be in <br />
-                    the amount of the contest prize.
-                </div>
-                <div>
-                    {this.state.ccHeader}
-                </div>
-                <form onSubmit={this.handleSubmit} id="payment-form">
-                    <div className="form-row">
-                        <label htmlFor="card-element">
-                            Credit or debit card
-                    </label>
-                        <div id="card-element">
-                            <CardElement style={this.style} />
-                        </div>
-                        <div id="card-errors" role="alert"></div>
-                    </div>
-                    <button>{this.state.ccExists ? 'Update' : 'Add'} credit card</button>
-                </form>
-            </div>
+            <Grid container spacing={6}>
+                <Grid item xs={6} sm={6} md={6} lg={6}>
+                    <Typography variant="h6" component="h6">
+                        By adding your credit card information, you are authorizing Tattoo Art
+                        to charge this card each time you declare a contest winner.  The charge will
+                        be in the amount of the contest prize.
+                    </Typography>
+                </Grid>
+                {this.state.clientSecret &&
+                    <Grid item xs={6} sm={6} md={6} lg={6}>
+                        <Typography variant="h6" component="h6">
+                            Current Card Details
+                        </Typography>
+                        <List>
+                            <ListItem>
+                                <ListItemText primary={`Card number: **** **** **** ${this.state.last4}`} />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemText primary={`Expiration: ${this.state.expMonth} / ${this.state.expYear}`} />
+                            </ListItem>
+                            <ListItem>
+                                <ListItemText primary={`Brand: ${this.state.brand
+                                    && this.state.brand[0].toUpperCase() + this.state.brand.slice(1)}`} />
+                            </ListItem>
+                        </List>
+                    </Grid>}
+                <Grid item xs={4} sm={4} md={4} lg={4}>
+                    <form onSubmit={this.handleSubmit} id="payment-form">
+                        <Grid container spacing={3} direction="column" className="form-row">
+                            <Grid item>
+                                <Typography variant="h6" component="h6">
+                                    Enter your credit card details:
+                                </Typography>
+                            </Grid>
+
+                            <Grid item id="card-element">
+                                <CardElement style={this.style} />
+                            </Grid>
+                            <Grid item id="card-errors" role="alert"></Grid>
+                            <Grid item>
+                                <Button color="inherit" variant="outlined">
+                                    {this.state.ccExists ? 'Update' : 'Add'} credit card
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </Grid>
+            </Grid>
 
         );
     }
