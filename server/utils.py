@@ -2,8 +2,11 @@ from flask import jsonify
 
 
 def handle_stripe_error(e, custom_msg=None):
-    if e.http_status // 100 == 4:
-        msg = 'We have made a mistake storing your Stripe data.'
+    if not e.http_status:
+        msg = "We have been unable to connect to Stripe."
+        status = 503
+    elif e.http_status // 100 == 4:
+        msg = 'There was a mistake with the request sent to Stripe from our servers.'
         status = 500
     elif e.http_status // 100 == 5:
         msg = "There is currently a problem with Stripe's servers."

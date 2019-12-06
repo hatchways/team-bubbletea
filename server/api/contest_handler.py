@@ -3,7 +3,7 @@ from database import db
 from models import Contest
 from datetime import datetime
 from api.payment_handler import charge_payment
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import DataError, IntegrityError
 from utils import handle_database_error
 
 contest_handler = Blueprint(
@@ -42,7 +42,7 @@ def create():
         #   created
         # charge_payment(contest.id)
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Contest was not added.')
 
@@ -70,7 +70,7 @@ def update(id):
             setattr(contest, key, request.json[key])
         db.session.commit()
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Contest was not updated.')
 
@@ -85,7 +85,7 @@ def delete(id):
         db.session.delete(contest)
         db.session.commit()
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Contest was not deleted.')
 

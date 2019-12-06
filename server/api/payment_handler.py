@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, redirect, url_for
+from flask import Blueprint, jsonify, request, redirect, url_for, make_response
 from database import db
 from models import User, Contest, Submission
 from datetime import datetime
@@ -6,7 +6,7 @@ from config import STRIPE_PUBLISHABLE_KEY_TEST, STRIPE_SECRET_KEY_TEST, STRIPE_C
 from uuid import uuid4
 import stripe
 import secrets
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import DataError, IntegrityError
 from utils import handle_stripe_error, handle_database_error
 
 stripe.api_key = STRIPE_SECRET_KEY_TEST
@@ -81,11 +81,12 @@ def update_cc_details(user_id):
             customer=f'{user.stripe_customer_id}',
             type='card',
         )
-        credit_card_id = payment_methods['data'][0]['id']
-        stripe.PaymentMethod.detach(credit_card_id)
+        if payment_methods:
+            credit_card_id = payment_methods['data'][0]['id']
+            stripe.PaymentMethod.detach(credit_card_id)
 
         stripe.PaymentMethod.attach(
-            request.json['payment_method_id'],
+            str(request.json['payment_method_id']),
             customer=user.stripe_customer_id,
         )
     except stripe.error.StripeError as e:
@@ -133,7 +134,7 @@ def get_transfer_history(user_id):
 def refund_owner(user_id):
     try:
         payment_intent = stripe.PaymentIntent.retrieve(
-            request.json['payment_intent_id'])
+            str(request.json['payment_intent_id']))
         stripe.Refund.create(payment_intent=payment_intent.id)
     except stripe.error.StripeError as e:
         return handle_stripe_error(e)
@@ -193,7 +194,7 @@ def send_transfer(contest_id):
             metadata={'contest_id': submission.contest.id}
         )
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         e.args = e.args + \
             ('Transfer not sent because winner could not be declared',)

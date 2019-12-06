@@ -6,8 +6,8 @@ from config import S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_
 from models import User, Submission, Contest
 from datetime import datetime
 from api.payment_handler import send_transfer, charge_payment
-from sqlalchemy.exc import DataError
-from botocore.exceptions import BotoCoreError
+from sqlalchemy.exc import DataError, IntegrityError
+from botocore.exceptions import BotoCoreError, ClientError
 from utils import handle_database_error, handle_amazon_error, handle_stripe_error
 import stripe
 
@@ -60,10 +60,10 @@ def upload(contest_id):
         db.session.add(submission)
         db.session.commit()
 
-    except BotoCoreError as e:
+    except (BotoCoreError, ClientError) as e:
         return handle_amazon_error(e, 'File could not be uploaded to S3 Bucket.')
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Submission could not be added.')
 
@@ -86,14 +86,15 @@ def edit(contest_id, submission_id):
 def update(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
     try:
-        for key in request.json.keys():
-            setattr(submission, key, request.json[key])
-        db.session.commit()
-    except (DataError, AssertionError) as e:
+        if request.json:
+            for key in request.json.keys():
+                setattr(submission, key, request.json[key])
+            db.session.commit()
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Submission was not updated.')
 
-    return redirect(url_for('submission_handler.show_contest', contest_id=contest_id, submission_id=submission.id))
+    return redirect(url_for('submission_handler.show_submission', contest_id=contest_id, submission_id=submission.id))
 
 
 @submission_handler.route('/<int:submission_id>', methods=['DELETE'])
@@ -103,7 +104,7 @@ def delete(contest_id, submission_id):
     try:
         db.session.delete(submission)
         db.session.commit()
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Submission was not deleted.')
 
@@ -120,7 +121,7 @@ def declare_winner(contest_id):
         send_transfer(contest_id)
         db.session.commit()
 
-    except (DataError, AssertionError) as e:
+    except (DataError, AssertionError, IntegrityError) as e:
         db.session.rollback()
         return handle_database_error(e, 'Contest winner was not declared.')
 
@@ -132,13 +133,13 @@ def declare_winner(contest_id):
 
 @submission_handler.route('/download', methods=['POST'])
 def download(contest_id):
-    key = request.json['key']
+    key = str(request.json['key'])
 
     try:
         s3_resource = boto3.resource('s3')
         my_bucket = s3_resource.Bucket(S3_BUCKET)
         file_obj = my_bucket.Object(key).get()
-    except BotoCoreError as e:
+    except (BotoCoreError, ClientError) as e:
         return handle_amazon_error(e, 'We failed to download image from S3 bucket.')
 
     return Response(
