@@ -3,6 +3,7 @@ from database import db
 from models import User
 from config import STRIPE_SECRET_KEY_TEST
 import stripe
+from utils import handle_stripe_error
 
 oauth_handler = Blueprint('oauth_handler', __name__)
 
@@ -18,7 +19,7 @@ def setup_transfer_details():
             code=request.args['code'],
         )
     except stripe.error.StripeError as e:
-        return jsonify({'error': e}), 500
+        return handle_stripe_error(e)
 
     user.stripe_transfer_id = response['stripe_user_id']
     db.session.commit()
