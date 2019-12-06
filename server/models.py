@@ -3,8 +3,12 @@ from sqlalchemy.orm import validates
 from datetime import timedelta, datetime
 
 
+user_conversation_table = db.Table('user_conversation', db.Model.metadata,
+    db.Column('conversation_id', db.Integer, db.ForeignKey('conversation.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+)
+
 class User(db.Model):
-    # dummy user model for now that will allow us to create contests
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -17,6 +21,8 @@ class User(db.Model):
     stripe_transfer_id = db.Column(db.String)
     stripe_customer_id = db.Column(db.String)
     stripe_payments = db.relationship('Payment', backref='customer', lazy=True)
+    conversations = db.relationship("Conversation", secondary=user_conversation_table, back_populates="users")
+    messages = db.relationship("Message")
 
     @property
     def password(self):
@@ -33,6 +39,27 @@ class User(db.Model):
     def __repr__(self):
         return f'User number {self.id}'
 
+
+class Conversation(db.Model):
+    __tablename__ = 'conversation'
+
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    users = db.relationship("User", secondary=user_conversation_table, back_populates="conversations") 
+    messages = db.relationship("Message")
+
+class Message(db.Model):
+    __tablename__ = 'message'
+
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    date_sent = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    message_text =  db.Column(db.String, nullable=False)
+    from_user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+    to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Contest(db.Model):
     __tablename__ = 'contest'
