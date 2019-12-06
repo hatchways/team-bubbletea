@@ -75,7 +75,7 @@ def show_submission(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
     return jsonify(submission.to_dict())
 
-# dedicated page for editing a contest, could potentially be combined with show_contest()
+
 @submission_handler.route('/<int:submission_id>/edit')
 def edit(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
@@ -86,6 +86,7 @@ def edit(contest_id, submission_id):
 def update(contest_id, submission_id):
     submission = Submission.query.get_or_404(submission_id)
     try:
+        # if there is no data (request.json is empty) should we return an error?
         if request.json:
             for key in request.json.keys():
                 setattr(submission, key, request.json[key])

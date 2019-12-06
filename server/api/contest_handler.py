@@ -15,7 +15,7 @@ def show_all():
     contests = Contest.query.all()
     return jsonify([contest.to_dict() for contest in contests])
 
-# view for creating a new contest, could potentially be combined with show_all()
+
 @contest_handler.route('/new')
 def new():
     return jsonify('Show form allowing us to create new contest')
@@ -23,7 +23,6 @@ def new():
 
 @contest_handler.route('', methods=['POST'])
 def create():
-    # just using a dummy user for now, need to create user with id=1 in postgres for this to work
     user_id = 1
 
     try:
@@ -54,7 +53,7 @@ def show_contest(id):
     contest = Contest.query.get_or_404(id)
     return jsonify(contest.to_dict())
 
-# dedicated page for editing a contest, could potentially be combined with show_contest()
+
 @contest_handler.route('/<int:id>/edit')
 def edit(id):
     contest = Contest.query.get_or_404(id)
