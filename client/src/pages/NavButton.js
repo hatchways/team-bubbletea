@@ -1,13 +1,9 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
+import React from "react";
+import { makeStyles, Button, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1)
-  },
-  input: {
-    display: 'none',
   },
   title: {
     fontFamily: theme.fontFamily,
@@ -16,14 +12,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function SignUpButton() {
+export function NavButton({ buttonName }) {
   const classes = useStyles();
 
   return (
-    <Button variant="outlined" color="inherit" className={classes.button}>
+    <Button color="inherit" className={classes.button}>
       <Typography className={classes.title} variant="button">
-        Sign Up
+        {buttonName}
       </Typography>
     </Button>
-  )
+  );
 }
