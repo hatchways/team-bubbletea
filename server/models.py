@@ -1,4 +1,4 @@
-from database import db
+from database import db, bcrypt
 from sqlalchemy.orm import validates
 from datetime import timedelta, datetime
 
@@ -8,12 +8,28 @@ class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    password_hash = db.Column(db.String(128))
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
     contests = db.relationship('Contest', backref='owner', lazy=True)
     submissions = db.relationship('Submission', backref='artist', lazy=True)
     stripe_transfer_id = db.Column(db.String)
     stripe_customer_id = db.Column(db.String)
     stripe_payments = db.relationship('Payment', backref='customer', lazy=True)
 
+    @property
+    def password(self):
+        raise AttributeError('Passwords cannot be directly accessed')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8') 
+
+    def check_password(self, password_to_check):
+        return bcrypt.check_password_hash(self.password_hash, password_to_check)
+        
+    
     def __repr__(self):
         return f'User number {self.id}'
 
