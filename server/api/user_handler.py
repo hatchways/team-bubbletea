@@ -10,3 +10,7 @@ def show_all():
     users = User.query.all()
     users_dict = jsonify([user.to_dict() for user in users])
     return users_dict
+
+# [{}]
+
+# {'other_users': [{}], 'user_logged_in': {}}

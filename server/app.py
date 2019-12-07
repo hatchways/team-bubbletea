@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask_cors import CORS
-from flask_socketio import SocketIO, join_room, send 
+from flask_socketio import join_room, send 
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.contest_handler import contest_handler
@@ -11,6 +11,7 @@ from api.conversation_handler import conversation_handler
 from api.message_handler import message_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
 from database import db, bcrypt 
+from web_socket import socketio
 from models import User 
 import jwt
 import json
@@ -22,7 +23,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql+psycopg2://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_URL}/{POSTGRES_DATABASE}'
 bcrypt.init_app(app)
 db.init_app(app)
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
+socketio.init_app(app)
 
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
@@ -82,7 +83,7 @@ def login():
             {
                 'sub': user_from_db.id,
                 'iat': datetime.datetime.utcnow(),
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=100)
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=24*60)
             },
             'secret', algorithm='HS256'  # Change secret key in config.py later
         )
@@ -103,6 +104,12 @@ def test_connect():
 def handle_incoming_message(json, methods=['GET', 'POST']):
     socketio.emit('ack', json)
     # socketio.emit('incoming response', json)
+
+@socketio.on('join room')
+def join_conversation_room(conversation_id): 
+    join_room(conversation_id)
+    send('User has joined the room') 
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

@@ -1,4 +1,5 @@
 import React from "react";
+import openSocket from "socket.io-client";
 import { AvailableUsers } from "./AvailableUsers";
 import { ConversationsList } from "./ConversationsList";
 import { Chatbox } from "./Chatbox";
@@ -13,6 +14,7 @@ export class Messaging extends React.Component {
       conversationClickedID: null,
       messages: []
     };
+    this.socket = openSocket('http://localhost:5000');
     this.viewAvailableUsers = this.viewAvailableUsers.bind(this)
     this.onConversationClick = this.onConversationClick.bind(this)
     this.onMessageSent = this.onMessageSent.bind(this)
@@ -42,6 +44,16 @@ export class Messaging extends React.Component {
       .catch(error => {
         console.log(error)
       })
+    //TODO add message listener to update the messages state 
+    this.socket.on('message sent', (incomingMessage) => {
+      if (incomingMessage.conversation_id === this.state.conversationClickedID) {
+        this.setState(previousState => {
+          let previousMessages = JSON.parse(JSON.stringify(previousState.messages))
+          previousMessages.push(incomingMessage)
+          return { messages: previousMessages }
+        })
+      }
+    })
   }
 
   viewAvailableUsers() {
@@ -75,6 +87,7 @@ export class Messaging extends React.Component {
         console.log(error)
       })
     this.setState({ conversationClickedID: conversationID })
+    this.socket.emit('join room', conversationID)
   }
 
   onMessageSent(messageText) {
@@ -103,7 +116,7 @@ export class Messaging extends React.Component {
         <input
           type="button"
           onClick={this.viewAvailableUsers}
-          value={'View Users'} />
+          value={'Start New Chat'} />
         {this.state.viewUsers &&
           <AvailableUsers
             users={this.state.users}

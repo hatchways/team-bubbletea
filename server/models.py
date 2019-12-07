@@ -25,8 +25,9 @@ class Message(db.Model):
 
     def to_dict(self):
         return {'message_id' : self.id, 
-                'date_created': self.date_created, 
-                'date_sent': self.date_sent, 
+                'conversation_id': self.conversation_id,
+                'date_created': self.date_created.strftime("%d/%m/%Y, %H:%M:%S"), 
+                'date_sent': self.date_sent.strftime("%d/%m/%Y, %H:%M:%S"), 
                 'message_text': self.message_text, 
                 'from_user': self.from_user.to_dict(), 
                 'to_user': self.to_user.to_dict()}

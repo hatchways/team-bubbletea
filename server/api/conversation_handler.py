@@ -14,10 +14,14 @@ def new():
   user_one = User.query.get_or_404(conversation_parameters['user_id'])
   token = jwt.decode(conversation_parameters['jwtoken'], 'secret', algorithm='HS256')
   user_two = User.query.get_or_404(token['sub']) 
-  conversation = Conversation(users=[user_one, user_two])
-  db.session.add(conversation)
-  db.session.commit()
-  return jsonify({ "success": True })
+  filtered_conversations = Conversation.query.filter(users=[user_one, user_two])
+  if len(filtered_conversations) == 0:
+    conversation = Conversation(users=[user_one, user_two])
+    db.session.add(conversation)
+    db.session.commit()
+    return jsonify({ "success": True })
+  else:
+    return jsonify({ "error": "The conversation you are trying to create already exists!"})
 
 @conversation_handler.route('/show', methods=['POST'])
 def show_all_conversations():

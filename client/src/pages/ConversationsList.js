@@ -2,7 +2,7 @@ import React from "react";
 
 export function ConversationsList(props) {
   return (
-    <div>Conversations
+    <div>Your Current Chats
       <ul>
         {props.conversations.map((conversation) => (
           <li onClick={() => props.onConversationClick(conversation.conversation_id)}
