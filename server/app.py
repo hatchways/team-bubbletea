@@ -6,6 +6,9 @@ from api.home_handler import home_handler
 from api.contest_handler import contest_handler
 from api.submission_handler import submission_handler
 from api.payment_handler import payment_handler
+from api.user_handler import user_handler
+from api.conversation_handler import conversation_handler
+from api.message_handler import message_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
 from database import db, bcrypt 
 from models import User 
@@ -28,21 +31,20 @@ app.register_blueprint(
     payment_handler, url_prefix="/users/<int:user_id>/payments")
 app.register_blueprint(
     submission_handler, url_prefix='/contests/<int:contest_id>/submissions')
+app.register_blueprint(user_handler, url_prefix="/users")
+app.register_blueprint(conversation_handler, url_prefix="/conversations")
+app.register_blueprint(message_handler, url_prefix="/messages")
 
 
 # Placeholder secret_key for sessions
 app.secret_key = 'secret'
 
 
-# Loading sample_users.json as a very simple "database"
-with open('sample_users.json') as sample_users:
-    users = json.load(sample_users)
-
 def authenticate(email, password):
     filtered_user = db.session.query(User).filter(User.email == email).first() 
     if not filtered_user: 
       return False 
-    return filtered_user.check_password(password)
+    return filtered_user.check_password(password), filtered_user
   
 
 
@@ -73,12 +75,14 @@ def login():
 
     user = request.get_json()
 
-    if authenticate(user['email'], user['password']):
+    auth_bool, user_from_db = authenticate(user['email'], user['password'])
+
+    if auth_bool:
         token = jwt.encode(
             {
-                'sub': user['email'],
+                'sub': user_from_db.id,
                 'iat': datetime.datetime.utcnow(),
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=1)
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=100)
             },
             'secret', algorithm='HS256'  # Change secret key in config.py later
         )

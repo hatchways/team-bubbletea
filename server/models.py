@@ -8,6 +8,29 @@ user_conversation_table = db.Table('user_conversation', db.Model.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+class Message(db.Model):
+    __tablename__ = 'message'
+
+    id = db.Column(db.Integer, primary_key=True)
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    date_sent = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    message_text =  db.Column(db.String, nullable=False)
+    from_user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+    to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    from_user = db.relationship('User', foreign_keys=[from_user_id])
+    to_user = db.relationship('User', foreign_keys=[to_user_id])
+
+    def to_dict(self):
+        return {'message_id' : self.id, 
+                'date_created': self.date_created, 
+                'date_sent': self.date_sent, 
+                'message_text': self.message_text, 
+                'from_user': self.from_user.to_dict(), 
+                'to_user': self.to_user.to_dict()}
+
 class User(db.Model):
     __tablename__ = 'user'
 
@@ -21,8 +44,10 @@ class User(db.Model):
     stripe_transfer_id = db.Column(db.String)
     stripe_customer_id = db.Column(db.String)
     stripe_payments = db.relationship('Payment', backref='customer', lazy=True)
-    conversations = db.relationship("Conversation", secondary=user_conversation_table, back_populates="users")
-    messages = db.relationship("Message")
+    conversations = db.relationship('Conversation', secondary=user_conversation_table, back_populates="users")
+    messages_to_user = db.relationship('Message', foreign_keys=[Message.to_user_id])
+    messages_from_user = db.relationship('Message', foreign_keys=[Message.from_user_id])
+
 
     @property
     def password(self):
@@ -35,9 +60,13 @@ class User(db.Model):
     def check_password(self, password_to_check):
         return bcrypt.check_password_hash(self.password_hash, password_to_check)
         
-    
     def __repr__(self):
         return f'User number {self.id}'
+
+    def to_dict(self):
+        return {'user_id' : self.id, 
+                'first_name' : self.first_name,
+                'last_name' : self.last_name}
 
 
 class Conversation(db.Model):
@@ -45,21 +74,16 @@ class Conversation(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    users = db.relationship("User", secondary=user_conversation_table, back_populates="conversations") 
-    messages = db.relationship("Message")
+    users = db.relationship('User', secondary=user_conversation_table, back_populates="conversations") 
+    messages = db.relationship('Message')
 
-class Message(db.Model):
-    __tablename__ = 'message'
+    def to_dict(self):
+        return {
+            'conversation_id': self.id, 
+            'date_created': self.date_created, 
+            'users': [user.to_dict() for user in self.users]
+        }
 
-    id = db.Column(db.Integer, primary_key=True)
-    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
-    date_created = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
-    date_sent = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
-    message_text =  db.Column(db.String, nullable=False)
-    from_user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
-    to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Contest(db.Model):
     __tablename__ = 'contest'

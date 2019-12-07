@@ -5,7 +5,6 @@ export class Chatbox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      conversation: [],
       inputMessage: ''
     };
     this.socket = openSocket('http://localhost:5000');
@@ -13,24 +12,24 @@ export class Chatbox extends React.Component {
     this.sendMessage = this.sendMessage.bind(this)
   }
   componentDidMount() {
-    this.socket.on('ack', response => {
-      this.setState(previousState => {
-        let previousConversation = JSON.parse(JSON.stringify(previousState.conversation))
-        previousConversation.push({ from: "user1", test: response })
-        return { conversation: previousConversation }
-      });
-    })
+    // this.socket.on('ack', response => {
+    //   this.setState(previousState => {
+    //     let previousConversation = JSON.parse(JSON.stringify(previousState.conversation))
+    //     previousConversation.push({ from: "user1", test: response })
+    //     return { conversation: previousConversation }
+    //   });
+    // })
 
-    // this will be used to handle the second user's response after schema is added 
-    // i.e. when we can distinguish between 2 users
-    // is not being used currently 
-    this.socket.on('incoming response', response => {
-      this.setState(previousState => {
-        let previousConversation = JSON.parse(JSON.stringify(previousState.conversation))
-        previousConversation.push({ from: "user2", test: response })
-        return { conversation: previousConversation }
-      });
-    })
+    // // this will be used to handle the second user's response after schema is added 
+    // // i.e. when we can distinguish between 2 users
+    // // is not being used currently 
+    // this.socket.on('incoming response', response => {
+    //   this.setState(previousState => {
+    //     let previousConversation = JSON.parse(JSON.stringify(previousState.conversation))
+    //     previousConversation.push({ from: "user2", test: response })
+    //     return { conversation: previousConversation }
+    //   });
+    // })
   }
 
   handleInputChange(e) {
@@ -39,15 +38,16 @@ export class Chatbox extends React.Component {
 
   sendMessage() {
     this.socket.emit('incoming message', this.state.inputMessage)
+    this.props.onMessageSent(this.state.inputMessage) 
   }
 
   render() {
     return (
       <div className='chatBox'>
-        {this.state.conversation.map(convMessage => {
+        {this.props.messages.map(convMessage => {
           return (
-            <div className={convMessage.from === "user1" ? "user1Message" : "user2Message"}>
-              {convMessage.test}
+            <div key={convMessage.message_id}>
+              {convMessage.message_text}
             </div>
           )
         }
