@@ -11,10 +11,10 @@ class TestBase(unittest.TestCase):
         self.app.testing = True
         self.app_context = self.app.app_context()
         self.app_context.push()
-        db.create_all()
-        self.api = self.app.test_client()
         self.app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
             'TEST_DATABASE_URL') or 'postgresql://localhost/circulate'
+        db.create_all()
+        self.api = self.app.test_client()
 
     def tearDown(self):
         db.session.remove()
