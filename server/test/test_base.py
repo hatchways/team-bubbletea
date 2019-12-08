@@ -1,17 +1,22 @@
 import unittest
-from app import app
+from app import create_app
+from database import db
 
 
 class TestBase(unittest.TestCase):
 
-    # executed prior to each test
     def setUp(self):
-        app.testing = True
-        self.api = app.test_client()
+        self.app = create_app('testing')
+        self.app.testing = True
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.api = self.app.test_client()
 
-    # executed after each test
     def tearDown(self):
-        pass
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
     if __name__ == "__main__":
         unittest.main()
