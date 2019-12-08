@@ -5,6 +5,7 @@ import random
 
 
 class SubmissionHandlerTest(TestBase):
+    pass
     # def test_create_submission(self):
     #     input_data = {'user_id': 1, 'contest_id': 3, 'image': 'No Image'}
 
