@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Typography } from '@material-ui/core';
+import { format } from 'date-fns';
 import { TextFieldLarge } from './TextFieldLarge';
 import { TextFieldPrizeAmount } from './TextFieldPrizeAmount';
 import { CreateContestPickDesign } from './CreateContestPickDesign';
@@ -23,6 +24,10 @@ const useStyles = makeStyles(theme => ({
 
 export function CreateContestPaper(props) {
   const classes = useStyles();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [prizeAmount, setPrizeAmount] = useState("");
+  const [deadline, setDeadline] = useState(new Date());
 
   return (
     <>
@@ -35,22 +40,31 @@ export function CreateContestPaper(props) {
             label="What do you need designed?"
             placeholder="Write a descriptive contest title"
             rowsMax="1"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
           />
           <TextFieldLarge
             label="Description"
             placeholder="Details about what type of tattoo you want"
             rows="10"
             rowsMax="10"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
           />
           <Grid container spacing={3}>
             <Grid item xs={4}>
               <TextFieldPrizeAmount
                 label="Prize amount"
                 placeholder="$100.00"
+                value={prizeAmount}
+                onChange={e => setPrizeAmount(e.target.value)}
               />
             </Grid>
             <Grid item xs={8}>
-              <CreateContestDatePicker />
+              <CreateContestDatePicker
+                deadline={deadline}
+                setDeadline={setDeadline}
+              />
             </Grid>
           </Grid>
           <CreateContestPickDesign />

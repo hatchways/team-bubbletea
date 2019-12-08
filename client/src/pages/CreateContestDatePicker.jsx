@@ -1,6 +1,7 @@
 import React, { useState }from 'react';
 import { makeStyles, Typography, Grid } from '@material-ui/core';
 import { KeyboardDatePicker, TimePicker } from '@material-ui/pickers';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -26,36 +27,36 @@ const useStyles = makeStyles(theme => ({
 
 export function CreateContestDatePicker(props) {
   const classes = useStyles();
-  const [selectedDate, handleDateChange] = useState(new Date());
 
   return (
     <Grid container justify="center">
       <Grid item xs={12}>
 				<Typography align="left" variant="h5" className={classes.caption}>
 					Deadline
+					{/* {format(props.deadline, 'dd/MM/yyyy HH:mm')} */}
 				</Typography>
 			</Grid>
       <Grid item xs={4}>
         <KeyboardDatePicker
-					value={selectedDate}
+					value={props.deadline}
 					className={classes.textfield}
 					InputAdornmentProps={{ position: "end" }}
 					inputProps={{className: classes.inputProps}}
 					variant="inline"
 					inputVariant="outlined"
           format="dd/MM/yyyy"
-          onChange={handleDateChange}
+          onChange={props.setDeadline}
           animateYearScrolling
         />
 			</Grid>
       <Grid item xs={4}>
 				<TimePicker
-					value={selectedDate}
+					value={props.deadline}
 					className={classes.textfield}
 					inputProps={{className: classes.inputProps}}
 					variant="inline"
 					inputVariant="outlined"
-          onChange={handleDateChange}
+          onChange={props.setDeadline}
         />
 			</Grid>
       <Grid item xs={4}>

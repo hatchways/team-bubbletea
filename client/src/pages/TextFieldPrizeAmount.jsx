@@ -35,7 +35,7 @@ export function TextFieldPrizeAmount(props) {
 			</Grid>
 			<Grid item xs={12}>
 				<TextField
-					type={props.type}
+					type="number"
 					className={classes.textfield}
 					inputProps={{className: classes.inputProps}}
 					variant="outlined"
