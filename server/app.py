@@ -44,7 +44,7 @@ def create_app():
     # Placeholder secret_key for sessions
     app.secret_key = 'secret'
 
-    socketio.run(app, debug=True)
+    # socketio.run(app)
 
     return app
 
