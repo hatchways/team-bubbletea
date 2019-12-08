@@ -41,63 +41,12 @@ def create_app():
     app.register_blueprint(conversation_handler, url_prefix="/conversations")
     app.register_blueprint(message_handler, url_prefix="/messages")
 
+    # Placeholder secret_key for sessions
+    app.secret_key = 'secret'
+
+    socketio.run(app, debug=True)
+
     return app
-
-
-# Placeholder secret_key for sessions
-app.secret_key = 'secret'
-
-
-def authenticate(email, password):
-    filtered_user = db.session.query(User).filter(User.email == email).first()
-    if not filtered_user:
-        return False
-    return filtered_user.check_password(password), filtered_user
-
-
-# Decode JWT token and return email, secret key to another variable later
-def decode(encoded):
-    decoded = jwt.decode(encoded, 'secret', algorithm='HS256')
-
-    return decoded['sub']
-
-
-# Routes
-@app.route('/home')
-def home():
-
-    logged_in = False
-
-    if 'token' in session:
-        decoded = decode(session['token'])
-        logged_in = True
-
-    return render_template('home.html', logged_in=logged_in, email=decoded)
-
-
-@app.route('/login', methods=['POST'])
-def login():
-
-    error = ''
-
-    user = request.get_json()
-
-    auth_bool, user_from_db = authenticate(user['email'], user['password'])
-
-    if auth_bool:
-        token = jwt.encode(
-            {
-                'sub': user_from_db.id,
-                'iat': datetime.datetime.utcnow(),
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=24*60)
-            },
-            'secret', algorithm='HS256'  # Change secret key in config.py later
-        )
-        return jsonify(token=token.decode('utf-8'), error=error)
-    else:
-        error = 'Invalid credentials'
-
-    return jsonify(error=error)
 
 
 @socketio.on('connect')
@@ -117,7 +66,3 @@ def handle_incoming_message(json, methods=['GET', 'POST']):
 def join_conversation_room(conversation_id):
     join_room(conversation_id)
     send('User has joined the room')
-
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True)

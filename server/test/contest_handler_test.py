@@ -7,16 +7,14 @@ import json
 
 
 class ContestHandlerTest(TestBase):
-    pass
+    def test_create_contest(self):
+        input_data = {'title': 'lion'+str(random.randint(0, 10000000)),
+                      'description': 'any old lion tattoo',
+                      'prize': 27.50,
+                      'deadline': datetime(2019, 12, 12, 12, 12).strftime("%m/%d/%Y, %H:%M:%S")}
 
-    # def test_create_contest(self):
-    #     input_data = {'title': 'lion'+str(random.randint(0, 10000000)),
-    #                   'description': 'any old lion tattoo',
-    #                   'prize': 27.50,
-    #                   'deadline': datetime(2019, 12, 12, 12, 12).strftime("%m/%d/%Y, %H:%M:%S")}
-
-    #     self.api.post('/contests', data=json.dumps(input_data),
-    #                   content_type='application/json')
+        self.api.post('/contests', data=json.dumps(input_data),
+                      content_type='application/json')
 
     # def test_update_contest(self):
     #     self.api.post(
