@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import { UploadSubmission } from './pages/UploadSubmission';
 import { ViewSubmissions } from './pages/ViewSubmissions';
 import { ViewContest } from './pages/ViewContest';
+import { Messaging } from "./pages/Messaging";
 
 import "./App.css";
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/view-submissions" component={ViewSubmissions} />
           <Route path="/payments-demo" component={Payments} />
           <Route path="/view-contest" component={ViewContest} />
+          <Route path="/messages" component={Messaging} />
         </Switch>
       </BrowserRouter>
     </MuiThemeProvider>
