@@ -29,7 +29,7 @@ export default function Signup() {
       <Header>
         <SignUpButton />
       </Header>
-      <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)}></input>
+      <input placeholder="Email" type="email" value={email} onChange={e => setEmail(e.target.value)}></input>
       <input placeholder="Password" type="password" value={password} onChange={e => setPassword(e.target.value)}></input>
       <button type="submit" onClick={handleSignupSubmit}>Submit</button>
       <p>{result}</p>
