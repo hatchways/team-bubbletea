@@ -3,6 +3,8 @@ from database import db
 from models import Contest
 from datetime import datetime
 from api.payment_handler import charge_payment
+from sqlalchemy.exc import DataError, IntegrityError
+from utils import handle_database_error
 
 contest_handler = Blueprint(
     'contest_handler', __name__)
@@ -13,7 +15,7 @@ def show_all():
     contests = Contest.query.all()
     return jsonify([contest.to_dict() for contest in contests])
 
-# view for creating a new contest, could potentially be combined with show_all()
+
 @contest_handler.route('/new')
 def new():
     return jsonify('Show form allowing us to create new contest')
@@ -21,23 +23,27 @@ def new():
 
 @contest_handler.route('', methods=['POST'])
 def create():
-    # just using a dummy user for now, need to create user with id=1 in postgres for this to work
     user_id = 1
 
-    contest = Contest(title=request.json['title'],
-                      description=request.json['description'],
-                      prize=request.json['prize'],
-                      deadline=datetime.strptime(
-                          request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
-                      user_id=user_id)
+    try:
+        contest = Contest(title=request.json['title'],
+                          description=request.json['description'],
+                          prize=request.json['prize'],
+                          deadline=datetime.strptime(
+            request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
+            user_id=user_id)
 
-    db.session.add(contest)
-    db.session.commit()
+        db.session.add(contest)
+        db.session.commit()
 
-    # We are currently charging contest owner when winner is declared,
-    #   but we may want to change it to charge them when contest is
-    #   created
-    # charge_payment(contest.id)
+        # We are currently charging contest owner when winner is declared,
+        #   but we may want to change it to charge them when contest is
+        #   created
+        # charge_payment(contest.id)
+
+    except (DataError, AssertionError, IntegrityError) as e:
+        db.session.rollback()
+        return handle_database_error(e, 'Contest was not added.')
 
     return redirect(url_for('contest_handler.show_contest', id=contest.id))
 
@@ -47,7 +53,7 @@ def show_contest(id):
     contest = Contest.query.get_or_404(id)
     return jsonify(contest.to_dict())
 
-# dedicated page for editing a contest, could potentially be combined with show_contest()
+
 @contest_handler.route('/<int:id>/edit')
 def edit(id):
     contest = Contest.query.get_or_404(id)
@@ -57,16 +63,29 @@ def edit(id):
 @contest_handler.route('/<int:id>', methods=['PATCH', 'PUT'])
 def update(id):
     contest = Contest.query.get_or_404(id)
-    # may be a better way to do this than setattr
-    for key in request.json.keys():
-        setattr(contest, key, request.json[key])
-    db.session.commit()
+
+    try:
+        for key in request.json.keys():
+            setattr(contest, key, request.json[key])
+        db.session.commit()
+
+    except (DataError, AssertionError, IntegrityError) as e:
+        db.session.rollback()
+        return handle_database_error(e, 'Contest was not updated.')
+
     return redirect(url_for('contest_handler.show_contest', id=id))
 
 
 @contest_handler.route('/<int:id>', methods=['DELETE'])
 def delete(id):
     contest = Contest.query.get_or_404(id)
-    db.session.delete(contest)
-    db.session.commit()
+
+    try:
+        db.session.delete(contest)
+        db.session.commit()
+
+    except (DataError, AssertionError, IntegrityError) as e:
+        db.session.rollback()
+        return handle_database_error(e, 'Contest was not deleted.')
+
     return redirect(url_for('contest_handler.show_all'))

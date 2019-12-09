@@ -125,7 +125,7 @@ class CreditCard extends React.Component {
                             </Grid>
                             <Grid item id="card-errors" role="alert"></Grid>
                             <Grid item>
-                                <Button color="inherit" variant="outlined">
+                                <Button color="inherit" variant="outlined" type="submit">
                                     {this.state.ccExists ? 'Update' : 'Add'} credit card
                                 </Button>
                             </Grid>

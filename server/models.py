@@ -49,13 +49,19 @@ class Contest(db.Model):
 
     @validates('deadline')
     def validate_deadline(self, key, deadline):
-        assert deadline < datetime.now() + timedelta(days=365)
+        assert deadline < datetime.now(
+        ) + timedelta(days=365), "Contest deadline must be within the next year."
         return deadline
 
     @validates('winner_transfer')
     def validate_winner_transfer(self, key, winner_transfer):
         assert winner_transfer == False or self.owner_payment == True, '''Transfer cannot 
             be made to contest winner since payment has not been received from contest owner.'''
+
+    @validates('prize')
+    def validate_prize(self, key, prize):
+        assert (prize >= 0), "Nice try. This isn't a charity."
+        return prize
 
 
 class Submission(db.Model):
@@ -86,7 +92,15 @@ class Submission(db.Model):
         assert winner == False or self.contest.deadline < datetime.now(
         ), "You cannot declare a winner until after the contest deadline."
         submissions = Submission.query.filter_by(contest_id=self.contest_id)
-        assert sum([1 for s in submissions if s.winner == True]
-                   ) <= 1, "You cannot declare more than one winner of this contest."
+        assert winner == False or sum([1 for sub in submissions if sub.winner == True and sub.id != self.id]
+                                      ) <= 0, "You cannot declare more than one winner of this contest."
 
         return winner
+
+    @validates('active')
+    def validate_active(self, key, active):
+        my_submissions = Submission.query.filter_by(
+            contest_id=self.contest_id, user_id=self.user_id)
+        assert active == False or sum([1 for sub in my_submissions if sub.active == True and sub.id != self.id]
+                                      ) == 0, "A user cannot have more than one active submission for a single contest. "
+        return active
