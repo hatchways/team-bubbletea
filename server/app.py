@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_cors import CORS
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
+from api.signup_handler import signup_handler
 from api.contest_handler import contest_handler
 from api.submission_handler import submission_handler
 from api.payment_handler import payment_handler
@@ -20,6 +21,7 @@ db.init_app(app)
 
 app.register_blueprint(home_handler)
 app.register_blueprint(ping_handler)
+app.register_blueprint(signup_handler, url_prefix="/signup")
 app.register_blueprint(contest_handler, url_prefix="/contests")
 app.register_blueprint(
     submission_handler, url_prefix="/contests/<int:contest_id>/submissions")
