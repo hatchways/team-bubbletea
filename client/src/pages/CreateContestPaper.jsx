@@ -26,7 +26,7 @@ export function CreateContestPaper(props) {
   const classes = useStyles();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [prizeAmount, setPrizeAmount] = useState("");
+  const [prizeAmount, setPrizeAmount] = useState(100.00);
   const [deadline, setDeadline] = useState(new Date());
 
   const handleCreateContest = (e) => {
