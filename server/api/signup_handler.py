@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 from database import db
 from models import User
 import json
-import re
 
 signup_handler = Blueprint('signup_handler', __name__)
 
@@ -11,11 +10,7 @@ def signup():
     result = ''
     user = request.get_json()
 
-    # Validation for email, regex from emailregex.com
-    if re.fullmatch(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", user['email']) == None:
-        result = "Invalid email!"
-        return jsonify(result=result)
-    # Validation for password length
+    # Validation for password length; validation for email format done client-side
     if len(user['password']) < 6:
         result = "Password must have a minimum of 6 characters!"
         return jsonify(result=result)
