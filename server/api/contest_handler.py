@@ -27,7 +27,7 @@ def create():
                       description=request.json['description'],
                       prize=request.json['prize'],
                       deadline=datetime.strptime(
-                          request.json['deadline'], "%m/%d/%Y, %H:%M:%S"),
+                          request.json['deadline'], "%m/%d/%Y, %H:%M"),
                       user_id=user_id)
 
     db.session.add(contest)
