@@ -14,6 +14,7 @@ def handle_stripe_error(e, custom_msg=None):
     else:
         msg = "We have been unable to connect to Stripe."
         status = 503
+    print (e)
     return jsonify({
         'success': False,
         'error': {
@@ -24,6 +25,7 @@ def handle_stripe_error(e, custom_msg=None):
 
 
 def handle_database_error(e, custom_msg=None):
+    print (e)
     return jsonify({
         'success': False,
         'error': {
@@ -35,6 +37,7 @@ def handle_database_error(e, custom_msg=None):
 
 def handle_amazon_error(e, custom_msg=None):
     msg = 'We could not retrieve/upload your images at this time.'
+    print (e)
     return jsonify({
         'success': False,
         'error': {

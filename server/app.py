@@ -32,7 +32,6 @@ app.register_blueprint(
 # Placeholder secret_key for sessions
 app.secret_key = 'secret'
 
-
 # Loading sample_users.json as a very simple "database"
 with open('sample_users.json') as sample_users:
     users = json.load(sample_users)
