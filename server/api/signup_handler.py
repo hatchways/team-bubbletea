@@ -21,7 +21,8 @@ def signup():
     try:
         db.session.add(new_user)
         db.session.commit()
+        result = "Successfully registered"
     except:
         result = "Email already registered!"
     
-    return jsonify(result="Successfully registered!")
+    return jsonify(result=result)
