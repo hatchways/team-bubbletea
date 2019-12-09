@@ -29,6 +29,22 @@ export function CreateContestPaper(props) {
   const [prizeAmount, setPrizeAmount] = useState("");
   const [deadline, setDeadline] = useState(new Date());
 
+  const handleCreateContest = (e) => {
+    fetch('http://localhost:5000/contests', { // POST request to backend
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "title": title,
+        "description": description,
+        "prize": prizeAmount,
+        "deadline": format(deadline, 'MM/dd/yyyy, HH:mm')
+      })
+    })
+  }
+
   return (
     <>
       <Typography align="center" variant="h4" className={classes.header}>
@@ -68,7 +84,9 @@ export function CreateContestPaper(props) {
             </Grid>
           </Grid>
           <CreateContestPickDesign />
-          <CreateContestButton />
+          <CreateContestButton
+            onClick={handleCreateContest}
+          />
         </Paper>
       </Grid>
     </>
