@@ -10,8 +10,15 @@ contest_handler = Blueprint(
     'contest_handler', __name__)
 
 
-@contest_handler.route('')
+@contest_handler.route('', methods=['GET'])
 def show_all():
+    user_id = request.args.get('user_id')
+
+    # Retrieve all contests for specific user
+    if user_id != None:
+        contests = Contest.query.filter_by(user_id=user_id)
+        return jsonify([contest.to_dict() for contest in contests])
+
     contests = Contest.query.all()
     return jsonify([contest.to_dict() for contest in contests])
 
