@@ -8,6 +8,7 @@ import json
 
 class ContestHandlerTest(TestBase):
     pass
+
     # def test_create_contest(self):
     #     input_data = {'title': 'lion'+str(random.randint(0, 10000000)),
     #                   'description': 'any old lion tattoo',
