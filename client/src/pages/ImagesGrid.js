@@ -32,7 +32,10 @@ export function ImagesGrid(props) {
           {props.submissions.map((submission, i) => (
             <Grid item className={classes.tile} key={i}>
               <GridListTile key={submission}>
-                <Image imageClickHandler={props.imageClickHandler} imageURL={submission} imageKey={props.submissionKeys[i]} />
+                <Image imageClickHandler={props.imageClickHandler}
+                  imageURL={submission}
+                  submissionID={props.submissionIDs[i]}
+                  imageKey={props.submissionKeys[i]} />
                 <GridListTileBar
                   className={classes.tilebar}
                   subtitle={<span>by: artistname</span>}
