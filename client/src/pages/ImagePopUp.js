@@ -52,7 +52,7 @@ export function ImagePopUp(props) {
             {!props.winnerDeclared && <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
               Declare Winner
                 </Button>}
-            <Button color="default" onClick={props.openWinnerMsg} >
+            <Button color="default" onClick={props.closePopUp} >
               Close
                 </Button>
           </DialogActions>

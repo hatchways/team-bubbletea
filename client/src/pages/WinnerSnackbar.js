@@ -1,15 +1,16 @@
 import React from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/core/styles';
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
     close: {
         padding: theme.spacing(0.5),
     },
-});
+}));
+
 
 
 
@@ -24,9 +25,9 @@ function WinnerSnackbar(props) {
                     vertical: 'bottom',
                     horizontal: 'left',
                 }}
-                open={open}
+                open={props.winnerMsg}
                 autoHideDuration={6000}
-                onClose={handleClose}
+                onClose={props.closeWinnerMsg}
                 ContentProps={{
                     'aria-describedby': 'message-id',
                 }}
@@ -37,7 +38,7 @@ function WinnerSnackbar(props) {
                         aria-label="close"
                         color="inherit"
                         className={classes.close}
-                        onClick={this.props.closeWinnerMsg}
+                        onClick={props.closeWinnerMsg}
                     >
                         <CloseIcon />
                     </IconButton>

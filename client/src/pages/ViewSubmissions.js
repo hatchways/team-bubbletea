@@ -4,7 +4,7 @@ import { ContestDetailsPaperSheet } from "./ContestDetailsPaper";
 import { ImageDisplayPaper } from "./ImageDisplayPaper";
 import { ImagePopUp } from "./ImagePopUp";
 import { NavButton } from "./NavButton";
-import { WinnerSnackbar } from './WinnerSnackbar';
+import WinnerSnackbar from './WinnerSnackbar';
 
 export class ViewSubmissions extends React.Component {
   constructor(props) {
@@ -86,7 +86,7 @@ export class ViewSubmissions extends React.Component {
           winnerDeclared={this.state.winnerID ? true : false}
           openWinnerMsg={this.openWinnerMsg}
         />
-        <WinnerSnackbar closeWinnerMsg={this.closeWinnerMsg} />
+        <WinnerSnackbar closeWinnerMsg={this.closeWinnerMsg} winnerMsg={this.state.winnerMsg} />
       </div>
     )
   }
