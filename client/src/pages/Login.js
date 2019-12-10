@@ -28,7 +28,6 @@ class Login extends Component {
 
     fetch('http://localhost:5000/login', { // POST request to backend
       method: 'POST',
-      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
       },
