@@ -24,7 +24,11 @@ s3 = boto3.client(
 
 
 @submission_handler.route('/')
-def show_all(contest_id):
+@requires_authentication
+def show_all(authenticated_user_id, contest_id):
+    contest = Contest.query.get_or_404(contest_id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
     submissions = Submission.query.filter_by(contest_id=contest_id).all()
     winner = Submission.query.filter_by(
         contest_id=contest_id, winner=True).first()
@@ -76,7 +80,11 @@ def upload(authenticated_user_id, contest_id):
 
 
 @submission_handler.route('/<int:submission_id>')
-def show_submission(contest_id, submission_id):
+@requires_authentication
+def show_submission(authenticated_user_id, contest_id, submission_id):
+    contest = Contest.query.get_or_404(contest_id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
     submission = Submission.query.get_or_404(submission_id)
     return jsonify(submission.to_dict())
 
@@ -149,7 +157,11 @@ def declare_winner(authenticated_user_id, contest_id):
 
 
 @submission_handler.route('/download', methods=['POST'])
-def download(contest_id):
+@requires_authentication
+def download(authenticated_user_id, contest_id):
+    contest = Contest.query.get_or_404(contest_id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
     key = str(request.json['key'])
 
     try:
