@@ -5,20 +5,20 @@ import ProfileSubmission from "./ProfileSubmission";
 
 const useStyles = makeStyles(theme => ({
   container: {
-    width: "70%",
+    width: "1400px",
     marginLeft: "auto",
     marginRight: "auto",
-    margin: "5% 0",
+    margin: "50px 0",
   },
   paper: {
     width: "100%",
-    padding: "5%",
+    padding: "60px",
     boxShadow:
       "-5px -5px 10px 3px rgba(209, 209, 209, 0.15), 5px 5px 10px 3px rgba(209, 209, 209, 0.15)"
   },
   header: {
     fontWeight: 600,
-    marginTop: "5%",
+    marginTop: "50px",
   },
   buttonSelected: {
     borderRadius: "0px",
