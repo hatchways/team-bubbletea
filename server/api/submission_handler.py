@@ -28,7 +28,6 @@ def show_all(contest_id):
     submissions = Submission.query.filter_by(contest_id=contest_id).all()
     winner = Submission.query.filter_by(
         contest_id=contest_id, winner=True).first()
-    print(winner.id)
 
     submissionsURLs = []
     submissionKeys = []

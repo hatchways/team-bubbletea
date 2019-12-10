@@ -4,6 +4,7 @@ import { ContestDetailsPaperSheet } from "./ContestDetailsPaper";
 import { ImageDisplayPaper } from "./ImageDisplayPaper";
 import { ImagePopUp } from "./ImagePopUp";
 import { NavButton } from "./NavButton";
+import { WinnerSnackbar } from './WinnerSnackbar';
 
 export class ViewSubmissions extends React.Component {
   constructor(props) {
@@ -15,12 +16,15 @@ export class ViewSubmissions extends React.Component {
       imagePopUpDisplayed: false,
       displayedImageURL: "",
       displayedSubmissionID: null,
-      contestID: 2,
-      winnerID: null
+      contestID: 3,
+      winnerID: null,
+      winnerMsg: false
     };
     this.viewAllSubmissions = this.viewAllSubmissions.bind(this)
     this.displayImagePopUp = this.displayImagePopUp.bind(this)
     this.closeImagePopUp = this.closeImagePopUp.bind(this)
+    this.openWinnerMsg = this.openWinnerMsg.bind(this)
+    this.closeWinnerMsg = this.closeWinnerMsg.bind(this)
   }
 
   componentDidMount() {
@@ -48,8 +52,12 @@ export class ViewSubmissions extends React.Component {
     this.setState({ imagePopUpDisplayed: false })
   }
 
-  flashWinnerMsg() {
-    console.log('Winner declared lol')
+  openWinnerMsg() {
+    this.setState({ winnerMsg: true })
+  }
+
+  closeWinnerMsg() {
+    this.setState({ winnerMsg: false })
   }
 
   render() {
@@ -76,8 +84,9 @@ export class ViewSubmissions extends React.Component {
           submissionID={this.state.displayedSubmissionID}
           contestID={this.state.contestID}
           winnerDeclared={this.state.winnerID ? true : false}
-          flashWinnerMsg={this.flashWinnerMsg}
+          openWinnerMsg={this.openWinnerMsg}
         />
+        <WinnerSnackbar closeWinnerMsg={this.closeWinnerMsg} />
       </div>
     )
   }

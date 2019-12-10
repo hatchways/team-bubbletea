@@ -51,6 +51,8 @@ class Contest(db.Model):
     def validate_deadline(self, key, deadline):
         assert deadline < datetime.now(
         ) + timedelta(days=365), "Contest deadline must be within the next year."
+        assert deadline > datetime.now(
+        ), "Contest deadline must be in the future."
         return deadline
 
     @validates('winner_transfer')

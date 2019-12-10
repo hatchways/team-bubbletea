@@ -33,7 +33,7 @@ export function ImagePopUp(props) {
     })();
 
     props.closePopUp();
-    props.flashWinnerMsg();
+    props.openWinnerMsg();
   }
 
   return (
@@ -52,7 +52,7 @@ export function ImagePopUp(props) {
             {!props.winnerDeclared && <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
               Declare Winner
                 </Button>}
-            <Button color="default" onClick={props.closePopUp} >
+            <Button color="default" onClick={props.openWinnerMsg} >
               Close
                 </Button>
           </DialogActions>
