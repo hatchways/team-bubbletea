@@ -15,7 +15,8 @@ export class ViewSubmissions extends React.Component {
       imagePopUpDisplayed: false,
       displayedImageURL: "",
       displayedSubmissionID: null,
-      contestID: 4,
+      contestID: 2,
+      winnerID: null
     };
     this.viewAllSubmissions = this.viewAllSubmissions.bind(this)
     this.displayImagePopUp = this.displayImagePopUp.bind(this)
@@ -32,7 +33,8 @@ export class ViewSubmissions extends React.Component {
         this.setState({
           submissions: data.files,
           submissionKeys: data.fileKeys,
-          submissionIDs: data.submissionIDs
+          submissionIDs: data.submissionIDs,
+          winnerID: data.winnerID
         });
       })
     )
@@ -61,6 +63,7 @@ export class ViewSubmissions extends React.Component {
           submissionKeys={this.state.submissionKeys}
           submissionIDs={this.state.submissionIDs}
           imageClickHandler={this.displayImagePopUp}
+          winnerID={this.state.winnerID}
         />
         <ImagePopUp
           imagePopUpDisplayed={this.state.imagePopUpDisplayed}
@@ -68,6 +71,7 @@ export class ViewSubmissions extends React.Component {
           closePopUp={this.closeImagePopUp}
           submissionID={this.state.displayedSubmissionID}
           contestID={this.state.contestID}
+          winnerDeclared={this.state.winnerID ? true : false}
         />
       </div>
     )

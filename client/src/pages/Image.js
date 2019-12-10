@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 
 export class Image extends React.Component {
-  constructor() {
+  constructor({ winner }) {
     super()
     this.state = {
       hover: false,
+      winner: winner
     }
 
     this.handleClickDownloadImage = this.handleClickDownloadImage.bind(this)
@@ -42,9 +43,26 @@ export class Image extends React.Component {
           width="200px"
           height="200px"
           src={this.props.imageURL}
-          style={{ opacity: this.state.hover ? 0.5 : 1 }}
+          style={{
+            opacity: this.state.hover ? 0.5 : 1,
+            border: this.state.winner ? '6px solid green' : null
+          }}
           alt="grid-submissions"
         />
+        {this.state.winner &&
+          <div style={{
+            top: 20,
+            left: 50,
+            position: "absolute",
+            textAlign: "center"
+          }}>
+            <div style={{
+              fontSize: 24,
+              color: "green",
+            }}>
+              <Typography component="h4" variant="h4">Winner</Typography>
+            </div>
+          </div>}
         {this.state.hover &&
           <div style={{
             top: 80,

@@ -26,6 +26,9 @@ s3 = boto3.client(
 def show_all(contest_id):
 
     submissions = Submission.query.filter_by(contest_id=contest_id).all()
+    winner = Submission.query.filter_by(
+        contest_id=contest_id, winner=True).first()
+    print(winner.id)
 
     submissionsURLs = []
     submissionKeys = []
@@ -40,7 +43,10 @@ def show_all(contest_id):
     except BotoCoreError as e:
         return handle_amazon_error(e, "We could not retrieve the current contest's submissions from the S3 bucket.")
 
-    return jsonify({"files": submissionsURLs, "fileKeys": submissionKeys, "submissionIDs": [submission.id for submission in submissions]})
+    return jsonify({"files": submissionsURLs,
+                    "fileKeys": submissionKeys,
+                    "submissionIDs": [submission.id for submission in submissions],
+                    "winnerID": winner.id if winner else None})
 
 
 @submission_handler.route('/upload', methods=['POST'])
