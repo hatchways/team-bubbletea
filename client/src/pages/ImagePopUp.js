@@ -33,6 +33,7 @@ export function ImagePopUp(props) {
     })();
 
     props.closePopUp();
+    props.flashWinnerMsg();
   }
 
   return (

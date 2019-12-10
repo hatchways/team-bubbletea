@@ -48,6 +48,10 @@ export class ViewSubmissions extends React.Component {
     this.setState({ imagePopUpDisplayed: false })
   }
 
+  flashWinnerMsg() {
+    console.log('Winner declared lol')
+  }
+
   render() {
     return (
       <div>
@@ -72,6 +76,7 @@ export class ViewSubmissions extends React.Component {
           submissionID={this.state.displayedSubmissionID}
           contestID={this.state.contestID}
           winnerDeclared={this.state.winnerID ? true : false}
+          flashWinnerMsg={this.flashWinnerMsg}
         />
       </div>
     )
