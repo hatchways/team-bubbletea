@@ -2,7 +2,8 @@ import React from "react";
 import openSocket from "socket.io-client";
 import { AvailableUsers } from "./AvailableUsers";
 import { ConversationsList } from "./ConversationsList";
-import { Chatbox } from "./Chatbox";
+import Chatbox from "./Chatbox";
+import { Header } from "./Header";
 
 export class Messaging extends React.Component {
   constructor(props) {
@@ -18,18 +19,39 @@ export class Messaging extends React.Component {
     this.viewAvailableUsers = this.viewAvailableUsers.bind(this)
     this.onConversationClick = this.onConversationClick.bind(this)
     this.onMessageSent = this.onMessageSent.bind(this)
+    this.onUserClick = this.onUserClick.bind(this)
+    this.onCloseUsersPopUp = this.onCloseUsersPopUp.bind(this)
   }
 
   componentDidMount() {
-    fetch('/users/show', { method: 'GET' })
+    fetch('/users/show', { 
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json'
+      }, 
+      body: JSON.stringify({ 'jwtoken': localStorage.getItem('token')})
+      })
       .then(response => response.json())
       .then(response => {
+        console.log(response)
         this.setState({ users: response })
       })
       .catch(error => {
         console.log(error)
       })
+    this.loadConversations() 
+    this.socket.on('message sent', (incomingMessage) => {
+      if (incomingMessage.conversation_id === this.state.conversationClickedID) {
+        this.setState(previousState => {
+          let previousMessages = JSON.parse(JSON.stringify(previousState.messages))
+          previousMessages.push(incomingMessage)
+          return { messages: previousMessages }
+        })
+      }
+    })
+  }
 
+  loadConversations() {
     fetch('/conversations/show', {
       method: 'POST',
       headers: {
@@ -44,16 +66,6 @@ export class Messaging extends React.Component {
       .catch(error => {
         console.log(error)
       })
-    //TODO add message listener to update the messages state 
-    this.socket.on('message sent', (incomingMessage) => {
-      if (incomingMessage.conversation_id === this.state.conversationClickedID) {
-        this.setState(previousState => {
-          let previousMessages = JSON.parse(JSON.stringify(previousState.messages))
-          previousMessages.push(incomingMessage)
-          return { messages: previousMessages }
-        })
-      }
-    })
   }
 
   viewAvailableUsers() {
@@ -61,6 +73,7 @@ export class Messaging extends React.Component {
   }
 
   onUserClick(userID) {
+    this.setState({ viewUsers: false })
     const conversationPayload = {
       'jwtoken': localStorage.getItem('token'),
       'user_id': userID
@@ -72,9 +85,7 @@ export class Messaging extends React.Component {
       },
       body: JSON.stringify(conversationPayload)
     })
-    //    .then(response => {
-    //      console.log(response.json())
-    //    })
+    .then(this.loadConversations())
   }
 
   onConversationClick(conversationID) {
@@ -110,19 +121,24 @@ export class Messaging extends React.Component {
       })
   }
 
+  onCloseUsersPopUp() {
+    this.setState({ viewUsers: false })
+  }
+
   render() {
     return (
       <div>
-        <input
-          type="button"
-          onClick={this.viewAvailableUsers}
-          value={'Start New Chat'} />
+        <Header />
         {this.state.viewUsers &&
           <AvailableUsers
+            closeUsersPopUp={this.onCloseUsersPopUp}
+            viewUsers={this.state.viewUsers}
             users={this.state.users}
             onUserClick={this.onUserClick}
           />}
         <ConversationsList
+          userLoggedIn={this.state.users.user_logged_in}
+          viewAvailableUsers={this.viewAvailableUsers}
           conversations={this.state.conversations}
           onConversationClick={this.onConversationClick}
         />

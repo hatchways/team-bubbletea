@@ -1,6 +1,26 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import TextField from '@material-ui/core/TextField';
+import Fab from '@material-ui/core/Fab';
+import SendIcon from '@material-ui/icons/Send';
+import Grid from "@material-ui/core/Grid"
+import { Typography } from "@material-ui/core";
+import { Input } from "@material-ui/core";
 
-export class Chatbox extends React.Component {
+const styles = theme => ({
+  root: {
+    position: 'fixed',
+    marginLeft: theme.spacing(35), 
+    marginTop: theme.spacing(65),
+  },
+  textbox: {
+    width: 900
+  },
+  toolbar: theme.mixins.toolbar
+});
+
+class Chatbox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,33 +36,49 @@ export class Chatbox extends React.Component {
 
   sendMessage() {
     this.props.onMessageSent(this.state.inputMessage)
-    this.setState({ inputMessage: ''}) 
+    this.setState({ inputMessage: '' })
   }
 
   render() {
+    const { classes } = this.props;
     return (
-      <div className='chatBox'>
+      <main>
         {this.props.messages.map(convMessage => {
           return (
-            <div key={convMessage.message_id}>
-              {convMessage.from_user.first_name + ':'}
-              {convMessage.message_text}
-            </div>
+            <Typography paragraph>
+              <div key={convMessage.message_id}>
+                {convMessage.from_user.first_name + ':'}
+                {convMessage.message_text}
+              </div>
+            </Typography>
           )
         }
         )}
-        <input
-          type='text'
-          name='inputMessage'
-          onChange={this.handleInputChange}
-          value={this.state.inputMessage}
-        />
-        <input
-          type='button'
-          onClick={this.sendMessage}
-          value={'Send Message'}
-        />
-      </div>
+        <Grid container className={classes.root}>
+          <Grid item className={classes.textbox}>
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Type a message..."
+              onChange={this.handleInputChange}
+              value={this.state.inputMessage}
+            />
+          </Grid>
+          <Grid item>
+            <div onClick={this.sendMessage}>
+              <Fab color="primary" aria-label="send" size="small">
+                <SendIcon />
+              </Fab>
+            </div>
+          </Grid>
+          </Grid>
+      </main>
     )
   }
 }
+
+Chatbox.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Chatbox); 

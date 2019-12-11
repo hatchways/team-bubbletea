@@ -2,9 +2,6 @@ import React from "react";
 import { AppBar, Toolbar, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
   title: {
     flexGrow: 1,
     "margin-left": "3.5%",
@@ -12,6 +9,7 @@ const useStyles = makeStyles(theme => ({
     "letter-spacing": "0.3em",
   },
   AppBar: {
+    zIndex: theme.zIndex.drawer + 1,
   	"background-color" : theme.secondary, 
   }
 }));
@@ -21,7 +19,7 @@ export function Header(props) {
 
  	return(
 	 <div>
-      <AppBar position="static" className={classes.AppBar}>
+      <AppBar position="fixed" className={classes.AppBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             TATTOO ART
