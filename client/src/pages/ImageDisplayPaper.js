@@ -23,7 +23,8 @@ export function ImageDisplayPaper(props) {
               imageClickHandler={props.imageClickHandler}
               submissions={props.submissions}
               submissionKeys={props.submissionKeys}
-              submissionIDs={props.submissionIDs} />
+              submissionIDs={props.submissionIDs}
+              winnerID={props.winnerID} />
           </Grid>
         </Paper>
       </Grid>
