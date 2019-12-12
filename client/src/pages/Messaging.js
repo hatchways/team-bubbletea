@@ -24,22 +24,21 @@ export class Messaging extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/users/show', { 
-      method: 'POST', 
+    fetch('/users/show', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
-      }, 
-      body: JSON.stringify({ 'jwtoken': localStorage.getItem('token')})
-      })
+      },
+      body: JSON.stringify({ 'jwtoken': localStorage.getItem('token') })
+    })
       .then(response => response.json())
       .then(response => {
-        console.log(response)
         this.setState({ users: response })
       })
       .catch(error => {
         console.log(error)
       })
-    this.loadConversations() 
+    this.loadConversations()
     this.socket.on('message sent', (incomingMessage) => {
       if (incomingMessage.conversation_id === this.state.conversationClickedID) {
         this.setState(previousState => {
@@ -85,7 +84,7 @@ export class Messaging extends React.Component {
       },
       body: JSON.stringify(conversationPayload)
     })
-    .then(this.loadConversations())
+      .then(this.loadConversations())
   }
 
   onConversationClick(conversationID) {
@@ -128,7 +127,7 @@ export class Messaging extends React.Component {
   render() {
     return (
       <div>
-        <Header />
+         <Header />
         {this.state.viewUsers &&
           <AvailableUsers
             closeUsersPopUp={this.onCloseUsersPopUp}
@@ -141,7 +140,7 @@ export class Messaging extends React.Component {
           viewAvailableUsers={this.viewAvailableUsers}
           conversations={this.state.conversations}
           onConversationClick={this.onConversationClick}
-        />
+        /> 
         <Chatbox
           messages={this.state.messages}
           onMessageSent={this.onMessageSent}

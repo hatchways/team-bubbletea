@@ -1,23 +1,34 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from '@material-ui/core/TextField';
-import Fab from '@material-ui/core/Fab';
-import SendIcon from '@material-ui/icons/Send';
 import Grid from "@material-ui/core/Grid"
-import { Typography } from "@material-ui/core";
-import { Input } from "@material-ui/core";
+import { Typography, Avatar } from "@material-ui/core";
+import { MessageSendField } from "./MessageSendField";
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 
 const styles = theme => ({
-  root: {
-    position: 'fixed',
-    marginLeft: theme.spacing(35), 
-    marginTop: theme.spacing(65),
+  messagesContainer: {
+    backgroundColor: "#f6f6f6",
+    height: 450,
+    width: 1040,
+    marginTop: theme.spacing(8),
+    marginLeft: theme.spacing(30),
+    "overflow-y": "auto", 
+    "overflow-x": "hidden"
   },
-  textbox: {
-    width: 900
-  },
-  toolbar: theme.mixins.toolbar
+  messages: {
+    marginLeft: theme.spacing(3),
+    paddingTop: theme.spacing(1), 
+    paddingBottom: theme.spacing(1)
+  }, 
+  messageCard: {
+    height: 50, 
+    borderRadius: 25
+  }, 
+  messageText: {
+    marginBottom: theme.spacing(10)
+  }
 });
 
 class Chatbox extends React.Component {
@@ -42,37 +53,37 @@ class Chatbox extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <main>
-        {this.props.messages.map(convMessage => {
-          return (
-            <Typography paragraph>
-              <div key={convMessage.message_id}>
-                {convMessage.from_user.first_name + ':'}
-                {convMessage.message_text}
-              </div>
-            </Typography>
-          )
-        }
-        )}
-        <Grid container className={classes.root}>
-          <Grid item className={classes.textbox}>
-            <TextField
-              fullWidth
-              id="outlined-basic"
-              label="Type a message..."
-              onChange={this.handleInputChange}
-              value={this.state.inputMessage}
-            />
-          </Grid>
-          <Grid item>
-            <div onClick={this.sendMessage}>
-              <Fab color="primary" aria-label="send" size="small">
-                <SendIcon />
-              </Fab>
-            </div>
-          </Grid>
-          </Grid>
-      </main>
+      <Fragment>
+        <Grid container className={classes.messagesContainer}>
+          {this.props.messages.map(convMessage => {
+            return (
+              <Grid container direction="row" spacing={1} alignItems="center" className={classes.messages}>
+                <Grid item alignContent="center">
+                  <Avatar className={classes.avatar} />
+                </Grid>
+                <Grid item alignContent="center" justify="center">
+                  <Card className={classes.messageCard}>
+                    <CardContent>
+                      <Typography adisplay="inline" variant="subtitle2" className={classes.messageText}>
+                        <div key={convMessage.message_id}>
+                          {convMessage.from_user.first_name + ":" + " "}
+                          {convMessage.message_text}
+                        </div>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
+            )
+          }
+          )}
+        </Grid>
+        <MessageSendField
+          onMessageChange={this.handleInputChange}
+          onValueChange={this.state.inputMessage}
+          onClickSendButton={this.sendMessage}
+        />
+      </Fragment>
     )
   }
 }

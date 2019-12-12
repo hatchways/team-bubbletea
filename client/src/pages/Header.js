@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
+    width: "100%",
     flexGrow: 1,
     "margin-left": "3.5%",
     "font-family": theme.fontFamily,

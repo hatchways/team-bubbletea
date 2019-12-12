@@ -17,11 +17,12 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   drawer: {
-    width: 240,
+    height: "100%",
     flexShrink: 0,
   },
   drawerPaper: {
-    width: 240,
+    width: 250,
+    boxShadow: "0px 1px 5px 0px rgba(209, 209, 209, 0.9)"
   },
   listTitle: {
     marginTop: theme.spacing(2)
