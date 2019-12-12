@@ -16,6 +16,7 @@ pyjwt = "*"
 flask-cors = "*"
 boto3 = "*"
 Flask-SocketIO = "*"
+Flask-Bcrypt = "*"
 
 
 [requires]
