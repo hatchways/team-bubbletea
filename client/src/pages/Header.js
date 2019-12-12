@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
     letterSpacing: "0.3em",
   },
   AppBar: {
-    backgroundColor: theme.secondary,
+    backgroundColor: "black",
+    padding: "15px 0"
   }
 }));
 

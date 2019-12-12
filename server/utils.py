@@ -1,4 +1,8 @@
 from flask import jsonify
+from functools import wraps
+from flask import request
+import jwt
+from models import User
 
 
 def handle_stripe_error(e, custom_msg=None):
@@ -14,7 +18,7 @@ def handle_stripe_error(e, custom_msg=None):
     else:
         msg = "We have been unable to connect to Stripe."
         status = 503
-    print (e)
+    print(e)
     return jsonify({
         'success': False,
         'error': {
@@ -25,7 +29,7 @@ def handle_stripe_error(e, custom_msg=None):
 
 
 def handle_database_error(e, custom_msg=None):
-    print (e)
+    print(e)
     return jsonify({
         'success': False,
         'error': {
@@ -37,7 +41,7 @@ def handle_database_error(e, custom_msg=None):
 
 def handle_amazon_error(e, custom_msg=None):
     msg = 'We could not retrieve/upload your images at this time.'
-    print (e)
+    print(e)
     return jsonify({
         'success': False,
         'error': {
@@ -45,3 +49,27 @@ def handle_amazon_error(e, custom_msg=None):
             'message': [str(x) for x in e.args] + ([msg, custom_msg] if custom_msg else [msg])
         }
     }), 503
+
+
+def handle_authentication_error(user_specific=False, custom_msg=None):
+    msg = 'Wrong user' if user_specific else 'You need to login to take this action.'
+    print(msg)
+    return jsonify({
+        'success': False,
+        'error': {
+            'type': 'Authentication Error',
+            'message': [msg, custom_msg] if custom_msg else [msg]
+        }
+    }), 401
+
+
+def requires_authentication(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        parameters = request.get_json()
+        if 'jwtoken' not in parameters.keys():
+            return handle_authentication_error()
+        token = jwt.decode(parameters['jwtoken'], 'secret', algorithm='HS256')
+        user = User.query.get_or_404(token['sub'])
+        return func(authenticated_user_id=user.id, *args, **kwargs)
+    return decorated
