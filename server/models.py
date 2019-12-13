@@ -44,6 +44,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
+    profile_picture = db.Column(db.String)
     contests = db.relationship('Contest', backref='owner', lazy=True)
     submissions = db.relationship('Submission', backref='artist', lazy=True)
     stripe_transfer_id = db.Column(db.String)
@@ -137,7 +138,7 @@ class Contest(db.Model):
 
     @validates('prize')
     def validate_prize(self, key, prize):
-        assert (prize >= 0), "Nice try. This isn't a charity."
+        assert (float(prize) >= 0), "Nice try. This isn't a charity."
         return prize
 
 

@@ -10,7 +10,8 @@ import { BasicTextField } from "./TextField";
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullname, setFullname] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
   const [result, setResult] = useState("")
 
   const handleSignupSubmit = (e) => {
@@ -22,7 +23,8 @@ export default function Signup() {
       body: JSON.stringify({
         "email": email,
         "password": password,
-        "fullname": fullname
+        "first_name": firstname,
+        "last_name": lastname
       })
     })
     .then(response => response.json())
@@ -46,15 +48,22 @@ export default function Signup() {
             onChange={e => setEmail(e.target.value)}
           />
           <BasicTextField
-            placeholder="Enter your name"
+            placeholder="First name"
             type="text"
-            label="Name"
-            value={fullname}
-            onChange={e => setFullname(e.target.value)}
+            label="First Name"
+            value={firstname}
+            onChange={e => setFirstname(e.target.value)}
+          />
+          <BasicTextField
+          placeholder="Last name"
+          type="text"
+          label="Last Name"
+          value={lastname}
+          onChange={e => setLastname(e.target.value)}
           />
           <BasicTextField
             placeholder="Enter password"
-            type="email"
+            type="password"
             label="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
