@@ -16,7 +16,7 @@ export class ViewSubmissions extends React.Component {
       imagePopUpDisplayed: false,
       displayedImageURL: "",
       displayedSubmissionID: null,
-      contestID: 3,
+      contestID: props.match.params.contestID,
       winnerID: null,
       winnerMsg: false
     };
@@ -32,7 +32,13 @@ export class ViewSubmissions extends React.Component {
   }
 
   viewAllSubmissions() {
-    fetch(`/contests/${this.state.contestID}/submissions/`).then(response =>
+    fetch(`/contests/${this.state.contestID}/submissions/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 'jwtoken': localStorage.getItem('token') })
+    }).then(response =>
       response.json().then(data => {
         this.setState({
           submissions: data.files,

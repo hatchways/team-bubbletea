@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles, Typography, Grid, Button } from '@material-ui/core';
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -31,6 +32,7 @@ export default function ProfileSubmission(props) {
   const [title] = useState(props.title);
   const [description] = useState(props.description);
   const [prizeAmount] = useState(props.prizeAmount);
+  const [contestID] = useState(props.contestID);
   const classes = useStyles();
 
   return (
@@ -43,6 +45,7 @@ export default function ProfileSubmission(props) {
           <Typography variant="h5" className={classes.title}>{title}</Typography>
           <Typography className={classes.description}>{description}</Typography>
           <Button className={classes.button}>{'$' + prizeAmount}</Button>
+          <Grid item><Link to={`/view-submissions/${contestID}`}>Go to Contest</Link></Grid>
         </Grid>
       </Grid>
     </Fragment>
