@@ -28,6 +28,8 @@ export function BackToContestsListButton() {
     //     Back to contests' list
     //     </Typography>
     // </Button>
-    <Link to="/view-contest">Go back to all contests</Link>
+    <div>
+      <Link to="/view-contest">Go back to all contests</Link>
+    </div>
   )
 }

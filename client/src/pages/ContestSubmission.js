@@ -42,7 +42,7 @@ export default function ContestSubmission(props) {
                 <Typography variant="h5" className={classes.title}>{title}</Typography>
                 <Typography className={classes.description}>{description}</Typography>
                 <Button className={classes.button}>{'$' + prizeAmount}</Button>
-                <Grid item><Link to={`/view-submissions/${contestID}`}>Go to Contest</Link></Grid>
+                <div> <Link to={`/view-submissions/${contestID}`}>Go to Contest</Link></div>
             </Grid>
         </Fragment>
     )
