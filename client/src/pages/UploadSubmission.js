@@ -3,6 +3,8 @@ import { Header } from "./Header";
 import { UploadPaper } from "./UploadPaper";
 import { UploadButton } from "./UploadButton";
 import { Redirect } from 'react-router-dom';
+import { NavButton } from "./NavButton";
+
 
 export class UploadSubmission extends React.Component {
     constructor(props) {
@@ -10,12 +12,16 @@ export class UploadSubmission extends React.Component {
         this.state = {
             files: null,
             redirect: false,
-            contestID: props.match.params.contestID,
+            redirectMessage: false,
+            redirectDiscover: false,
+            redirectAccount: false,
+            contestID: props.match.params.contestID
         }
         this.fileUploadRef = React.createRef()
         this.handleChangeInUpload = this.handleChangeInUpload.bind(this)
         this.handleClickUpload = this.handleClickUpload.bind(this)
         this.showFileUpload = this.showFileUpload.bind(this)
+        this.redirectToNewPage = this.redirectToNewPage.bind(this)
     }
 
     showFileUpload() {
@@ -47,16 +53,34 @@ export class UploadSubmission extends React.Component {
             alert("Please select a file to upload first!")
         }
     }
+
+    redirectToNewPage(buttonName) {
+        if (buttonName === "Messages") {
+            this.setState({ redirectMessage: true })
+        } else if (buttonName === "Discover") {
+            this.setState({ redirectDiscover: true })
+        } else if (buttonName === "Profile") {
+            this.setState({ redirectAccount: true })
+        }
+    }
+
     render() {
         return (
             <div>
-                <Header />
+                <Header>
+                    <NavButton buttonName="Discover" redirect={this.redirectToNewPage}></NavButton>
+                    <NavButton buttonName="Messages" redirect={this.redirectToNewPage}></NavButton>
+                    <NavButton buttonName="Profile" redirect={this.redirectToNewPage}></NavButton>
+                </Header>
                 <UploadPaper showFileUpload={this.showFileUpload}>
                     <form className="upload-form" method="post" encType="multipart/form-data" />
                     <input type="file" ref={this.fileUploadRef} onChange={this.handleChangeInUpload} style={{ display: "none" }} />
                     <UploadButton type="submit" onClick={this.handleClickUpload} />
                 </UploadPaper>
                 {this.state.redirect && <Redirect to='/view-contest' />}
+                {this.state.redirectMessage && <Redirect to='/messages' />}
+                {this.state.redirectDiscover && <Redirect to='/' />}
+                {this.state.redirectAccount && <Redirect to='/profile' />}
             </div>
         )
     }

@@ -64,6 +64,7 @@ def create(authenticated_user_id):
         db.session.add(contest)
         db.session.commit()
 
+        return jsonify(error="")
         # We are currently charging contest owner when winner is declared,
         #   but we may want to change it to charge them when contest is
         #   created

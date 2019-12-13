@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   position: {
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
-    marginTop: 30,
+    marginTop: 100,
   },
   header: {
     marginBottom: 30,
@@ -42,7 +42,7 @@ export function UploadPaper(props) {
           </Grid>
           <Grid item>
             <div align="center" onClick={props.showFileUpload}>
-              <img src={uploadImage} style={{ width: "25%", height: "25%" }} />
+              <img src={uploadImage} style={{ width: "25%", height: "25%" }} alt="upload-submission"/>
             </div>
           </Grid>
           <Grid item className={classes.subheader}>
