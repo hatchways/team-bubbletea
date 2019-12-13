@@ -21,17 +21,20 @@ const useStyles = makeStyles(theme => ({
 }));
 
 // Placeholder array for image URLs, implement to fetch from bucket after
-let designsArray = [];
-let i;
-for (i = 1; i <= 11; i++) {
-  designsArray.push('/designs/design' + i + '.png')
-};
+let designsArray = ["https://i.imgur.com/jbOoUbr.png", "https://i.imgur.com/uYZX8sA.png",
+"https://i.imgur.com/x47vWz3.png", "https://i.imgur.com/b1g6Vzv.png", "https://i.imgur.com/N5nuDoC.png",
+"https://i.imgur.com/9V2l7vZ.png", "https://i.imgur.com/EJ1PCA9.png", "https://i.imgur.com/b6qWOXx.png",
+"https://i.imgur.com/BrYdOxi.png", "https://i.imgur.com/iUUALda.png", "https://i.imgur.com/Q1Yp07G.png"];
+// let i;
+// for (i = 1; i <= 11; i++) {
+//   designsArray.push('/designs/design' + i + '.png')
+// };
 
 export function CreateContestPickDesign(props) {
   const [designs] = useState(designsArray);
+  const [selected, setSelected] = useState("");
   const classes = useStyles();
 
-  console.log(designsArray)
   return (
     <Fragment>
       <Grid container justify="center">
@@ -39,13 +42,14 @@ export function CreateContestPickDesign(props) {
           <Typography align="left" variant="h5" className={classes.caption}>
             Which designs do you like?
           </Typography>
+          {/* <p>{selected}</p> */}
           <Typography align="left">
             Let's start by helping your designers understand which style you prefer.
           </Typography>
         </Grid>
         <Grid item xs={12} className={classes.container}>
           <Grid container spacing={2} justify="center">
-            {designs.map((design, j) => (<InspDesign imageURL={designs[j]} />))}
+            {designs.map((design, j) => (<InspDesign onClick={() => setSelected(designs[j])} imageURL={designs[j]} />))}
           </Grid>
         </Grid>
       </Grid>

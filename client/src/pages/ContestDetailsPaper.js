@@ -19,12 +19,12 @@ export function ContestDetailsPaperSheet() {
     <Grid container justify="center">
       <Grid item xs={9} md={7} lg={12}>
         <Paper className={classes.root}>
-          <BackToContestsListButton />
           <div>
             <Typography variant="h4">Contest Title</Typography>
             <Typography variant="h6">$150</Typography>
           </div>
           <Typography variant="caption">Author name</Typography>
+          <BackToContestsListButton />
         </Paper>
       </Grid>
     </Grid>

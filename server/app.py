@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask_cors import CORS
-from flask_socketio import join_room, send 
+from flask_socketio import join_room, send
 from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.signup_handler import signup_handler
@@ -11,6 +11,7 @@ from api.user_handler import user_handler
 from api.conversation_handler import conversation_handler
 from api.message_handler import message_handler
 from api.oauth_handler import oauth_handler
+
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME, S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_REGION
 from database import db, bcrypt 
 from web_socket import socketio
@@ -46,10 +47,10 @@ app.secret_key = 'secret'
 
 
 def authenticate(email, password):
-    filtered_user = db.session.query(User).filter(User.email == email).first() 
-    if not filtered_user: 
-      return False 
-    return filtered_user.check_password(password), filtered_user  
+    filtered_user = db.session.query(User).filter(User.email == email).first()
+    if not filtered_user:
+        return False
+    return filtered_user.check_password(password), filtered_user
 
 
 # Decode JWT token and return email, secret key to another variable later
@@ -96,17 +97,20 @@ def login():
 
     return jsonify(error=error)
 
+
 @socketio.on('incoming message')
 def handle_incoming_message(json, methods=['GET', 'POST']):
     socketio.emit('ack', json)
 
+
 @socketio.on('join all rooms')
-def join_all_conversation_rooms(jwtoken_dict): 
+def join_all_conversation_rooms(jwtoken_dict):
     encoded_token = jwtoken_dict['jwtoken']
     decoded_token = jwt.decode(encoded_token, 'secret', algorithm='HS256')
     user = User.query.get_or_404(decoded_token['sub'])
-    conversations = Conversation.query.filter(Conversation.users.contains(user))
-    for conversation in conversations: 
+    conversations = Conversation.query.filter(
+        Conversation.users.contains(user))
+    for conversation in conversations:
         join_room(conversation.id)
 
 
