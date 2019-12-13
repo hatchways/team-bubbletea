@@ -11,8 +11,32 @@ contest_handler = Blueprint(
     'contest_handler', __name__)
 
 
-@contest_handler.route('')
+@contest_handler.route('', methods=['GET'])
 def show_all():
+    user_id = request.args.get('user_id')
+    completed = request.args.get('completed')
+    current_time = datetime.utcnow()
+
+    # Retrieve all contests for specific user
+    if user_id != None:
+        if completed == "True":
+            contests = Contest.query.filter(Contest.deadline <= current_time).filter_by(user_id=user_id).all()
+            return jsonify([contest.to_dict() for contest in contests])
+        elif completed == "False":
+            contests = Contest.query.filter(Contest.deadline > current_time).filter_by(user_id=user_id).all()
+            return jsonify([contest.to_dict() for contest in contests])
+
+        contests = Contest.query.filter_by(user_id=user_id)
+        return jsonify([contest.to_dict() for contest in contests])
+
+    # No specific user
+    if completed == "True":
+        contests = Contest.query.filter(Contest.deadline <= current_time).all()
+        return jsonify([contest.to_dict() for contest in contests])
+    elif completed == "False":
+        contests = Contest.query.filter(Contest.deadline > current_time).all()
+        return jsonify([contest.to_dict() for contest in contests])
+
     contests = Contest.query.all()
     return jsonify([contest.to_dict() for contest in contests])
 
