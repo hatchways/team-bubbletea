@@ -35,7 +35,7 @@ export function ProfileDetails() {
   return (
     <Fragment>
       <Grid container justify="center" className={classes.container}>
-        <Grid item xs={12} justify="center">
+        <Grid item xs={12}>
           <div className={classes.profilePictureContainer}>
             <img src="https://i.imgur.com/tha7BKH.png" alt="" className={classes.profilePicture}></img>
           </div>
