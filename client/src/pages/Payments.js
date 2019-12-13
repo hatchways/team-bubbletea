@@ -1,67 +1,60 @@
 import React, { useState, Fragment } from "react";
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import InjectedCreditCard from "./CreditCard";
-import ChargePayment from "./ChargePayment";
+import History from "./History";
 import Transfer from "./Transfer";
-import Refund from "./Refund";
+import ListPaymentOptions from "./ListPaymentOptions"
+import { Header } from './Header';
+import { makeStyles } from '@material-ui/core/styles';
+import { Paper, Typography, Grid, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        height: '100vh',
+    },
+    paper: {
+        margin: theme.spacing(8, 4),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    }
+}));
 
 var Payments = function () {
-  let userID = 1;
-  const [stripePage, setStripePage] = useState(null);
-  const [clientSecret, setClientSecret] = useState(null);
+    const classes = useStyles();
 
-  if (!clientSecret) {
-    (async () => {
-      const response = await fetch(`/users/${userID}/payments/secret`);
-      const { client_secret: newClientSecret } = await response.json();
-      setClientSecret(newClientSecret);
-    })();
-  }
+    const [stripePage, setStripePage] = useState(null);
+    const stripePublishableKey = "pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx"
 
-  function changeStripePage(event) {
-    setStripePage(event.target.value);
-  }
+    let userID = 1;
 
-  const optionsMenu = (
-    <div>
-      <select onChange={changeStripePage}>
-        <option value="none">---</option>
-        <option value="creditCard">Add or update my credit card information</option>
-        <option value="chargePayment">Make a payment</option>
-        <option value="transfer">Set up my bank account to receive transfers</option>
-        <option value="refund">Claim a refund</option>
-      </select>
-    </div >
-  )
-
-  const creditCardPage = (
-    <div>
-      <div>
-        <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
-          <Elements>
-            <InjectedCreditCard key={1} clientSecret={clientSecret} userID={userID} setupOrUpdate={"setup"} />
-          </Elements>
-        </StripeProvider>
-      </div>
-      <div>
-        <StripeProvider apiKey="pk_test_3Ty6VUy1rfVdHm4JSOP1Uo8z00w8r5ooyx">
-          <Elements>
-            <InjectedCreditCard key={2} clientSecret={clientSecret} userID={userID} setupOrUpdate={"update"} />
-          </Elements>
-        </StripeProvider>
-      </div>
-    </div>
-  );
-
-  return (
-    <Fragment>
-      {optionsMenu}
-      {stripePage === 'creditCard' && ({ creditCardPage })}
-      {stripePage === 'transfer' && (<Transfer userID={userID} />)}
-      {stripePage === 'chargePayment' && <ChargePayment userID={userID} />}
-      {stripePage === 'refund' && <Refund userID={userID} />}
-    </Fragment>
-  )
+    return (
+        <div>
+            <Header />
+            <Grid container component="main" className={classes.root}>
+                <CssBaseline />
+                <Grid item xs={3} sm={3} md={3} >
+                    <ListPaymentOptions setStripePage={setStripePage} />
+                </Grid>
+                <Grid item xs={9} sm={9} md={9} component={Paper} elevation={6} square>
+                    <div className={classes.paper}>
+                        {stripePage === 'creditCard' &&
+                            <StripeProvider apiKey={stripePublishableKey}>
+                                <Elements>
+                                    <InjectedCreditCard userID={userID} />
+                                </Elements>
+                            </StripeProvider>
+                        }
+                        {stripePage === 'transfer' && <Transfer userID={userID} />}
+                        {stripePage === 'history' && <History userID={userID} />}
+                        {stripePage === 'profile' && <Typography>Profile</Typography>}
+                    </div>
+                </Grid>
+            </Grid>
+        </div >
+    );
 }
 
 export default Payments;

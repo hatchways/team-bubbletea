@@ -1,33 +1,34 @@
-import React from "react"; 
+import React from "react";
 import { AppBar, Toolbar, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
     width: "100%",
     flexGrow: 1,
-    "margin-left": "3.5%",
-    "font-family": theme.fontFamily,
-    "letter-spacing": "0.3em",
+    marginLeft: theme.spacing(5),
+    fontFamily: theme.fontFamily,
+    letterSpacing: "0.3em",
   },
   AppBar: {
     zIndex: theme.zIndex.drawer + 1,
-  	"background-color" : theme.secondary, 
+    backgroundColor: "black",
+    padding: "15px 0"
   }
 }));
 
 export function Header(props) {
-	const classes = useStyles();
+  const classes = useStyles();
 
- 	return(
-	 <div>
-      <AppBar position="fixed" className={classes.AppBar}>
+  return (
+    <div>
+      <AppBar position="static" className={classes.AppBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             TATTOO ART
           </Typography>
-         {props.children}
+          {props.children}
         </Toolbar>
       </AppBar>
     </div>
-    )
-  }
+  )
+}

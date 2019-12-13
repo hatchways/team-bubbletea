@@ -3,17 +3,17 @@ import { makeStyles, Button, Typography, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    "font-family" : theme.fontFamily,
+    fontFamily: theme.fontFamily,
   },
   button: {
-  	"background-color": theme.secondary,
-  	"color": theme.bgcolor,
-  	"border-radius": "0",
+    backgroundColor: theme.secondary,
+    color: theme.bgcolor,
+    borderRadius: 0,
   },
   buttonContainer: {
-  	"width": "40%",
-  	"margin-left": "30%", 
-  	"margin-top" : "10%"
+    width: 125,
+    marginLeft: theme.spacing(11),
+    marginTop: theme.spacing(3)
   }
 }));
 
@@ -22,15 +22,15 @@ export function SignInButton(props) {
 
   return (
     <div>
-    <Grid item>
-    	<div className={classes.buttonContainer}>
-      	<Button type={props.type} fullWidth className={classes.button} variant="contained">
-      		<Typography className={classes.root}>
-      			Sign In
+      <Grid item>
+        <div className={classes.buttonContainer}>
+          <Button type={props.type} fullWidth className={classes.button} variant="contained">
+            <Typography className={classes.root}>
+              Sign In
       		</Typography>
-      	</Button>
-      </div>
-    </Grid>
+          </Button>
+        </div>
+      </Grid>
     </div>
   )
 }
