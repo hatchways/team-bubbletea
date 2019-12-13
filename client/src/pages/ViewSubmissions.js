@@ -5,6 +5,7 @@ import { ImageDisplayPaper } from "./ImageDisplayPaper";
 import { ImagePopUp } from "./ImagePopUp";
 import { NavButton } from "./NavButton";
 import WinnerSnackbar from './WinnerSnackbar';
+import { Redirect } from 'react-router-dom'; 
 
 export class ViewSubmissions extends React.Component {
   constructor(props) {
@@ -18,13 +19,17 @@ export class ViewSubmissions extends React.Component {
       displayedSubmissionID: null,
       contestID: props.match.params.contestID,
       winnerID: null,
-      winnerMsg: false
+      winnerMsg: false, 
+      redirectMessage: false, 
+      redirectDiscover: false, 
+      redirectAccount: false
     };
     this.viewAllSubmissions = this.viewAllSubmissions.bind(this)
     this.displayImagePopUp = this.displayImagePopUp.bind(this)
     this.closeImagePopUp = this.closeImagePopUp.bind(this)
     this.openWinnerMsg = this.openWinnerMsg.bind(this)
     this.closeWinnerMsg = this.closeWinnerMsg.bind(this)
+    this.redirectToNewPage = this.redirectToNewPage.bind(this)
   }
 
   componentDidMount() {
@@ -66,14 +71,23 @@ export class ViewSubmissions extends React.Component {
     this.setState({ winnerMsg: false })
   }
 
+  redirectToNewPage(buttonName) {
+    if(buttonName === "Messages") {
+      this.setState({ redirectMessage: true })
+    } else if (buttonName === "Discover") {
+      this.setState({ redirectDiscover: true })
+    } else if (buttonName === "Profile") {
+      this.setState({ redirectAccount: true })
+    }
+  }
+
   render() {
     return (
       <div>
         <Header>
-          <NavButton buttonName="Discover"></NavButton>
-          <NavButton buttonName="Messages"></NavButton>
-          <NavButton buttonName="Notifications"></NavButton>
-          <NavButton buttonName="Account"></NavButton>
+          <NavButton buttonName="Discover" redirect={this.redirectToNewPage}></NavButton>
+          <NavButton buttonName="Messages" redirect={this.redirectToNewPage}></NavButton>
+          <NavButton buttonName="Profile" redirect={this.redirectToNewPage}></NavButton>
         </Header>
         <ContestDetailsPaperSheet />
         <ImageDisplayPaper
@@ -93,6 +107,9 @@ export class ViewSubmissions extends React.Component {
           openWinnerMsg={this.openWinnerMsg}
         />
         <WinnerSnackbar closeWinnerMsg={this.closeWinnerMsg} winnerMsg={this.state.winnerMsg} />
+        {this.state.redirectMessage && <Redirect to='/messages'/>}
+        {this.state.redirectDiscover && <Redirect to='/'/>}
+        {this.state.redirectAccount && <Redirect to='/profile'/>}
       </div>
     )
   }
