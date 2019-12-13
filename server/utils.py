@@ -67,7 +67,7 @@ def requires_authentication(func):
     @wraps(func)
     def decorated(*args, **kwargs):
         parameters = request.get_json()
-        if 'jwtoken' not in parameters.keys():
+        if not parameters or 'jwtoken' not in parameters.keys():
             return handle_authentication_error()
         token = jwt.decode(parameters['jwtoken'], 'secret', algorithm='HS256')
         user = User.query.get_or_404(token['sub'])

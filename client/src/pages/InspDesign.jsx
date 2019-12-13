@@ -33,11 +33,11 @@ export function InspDesign(props) {
     <Grid item xs={3}>
       <div className={classes.container}>
         {selected ? (
-        <div className={classes.overlay} onClick={() => setSelected(false)}>
+        <div className={classes.overlay} onClick={() => {setSelected(false); props.onClick()}}>
           <img src={props.imageURL} alt="" className={classes.imageDarkened}/>
         </div>
         ) : (
-        <div className={classes.overlay} onClick={() => setSelected(true)}>
+        <div className={classes.overlay} onClick={() => {setSelected(true); props.onClick()}}>
           <img src={props.imageURL} alt="" className={classes.image}/>
         </div>
         )}

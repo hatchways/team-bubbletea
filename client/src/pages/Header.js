@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
   AppBar: {
     zIndex: theme.zIndex.drawer + 1,
     backgroundColor: "black"
-  }
+  },
+  offset: theme.mixins.toolbar
 }));
 
 export function Header(props) {
@@ -28,6 +29,7 @@ export function Header(props) {
           {props.children}
         </Toolbar>
       </AppBar>
+      <div className={classes.offset} />
     </div>
   )
 }
