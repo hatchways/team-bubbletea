@@ -56,12 +56,13 @@ def create(authenticated_user_id):
                           description=parameters['description'],
                           prize=parameters['prize'],
                           deadline=datetime.strptime(
-            parameters['deadline'], "%m/%d/%Y, %H:%M:%S"),
+            parameters['deadline'], "%m/%d/%Y, %H:%M"),
             user_id=authenticated_user_id)
 
         db.session.add(contest)
         db.session.commit()
 
+        return jsonify(error="")
         # We are currently charging contest owner when winner is declared,
         #   but we may want to change it to charge them when contest is
         #   created
