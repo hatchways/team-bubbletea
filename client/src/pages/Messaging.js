@@ -68,6 +68,7 @@ export class Messaging extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
+        console.log(response)
         this.setState({ conversations: response })
       })
       .catch(error => {
@@ -92,7 +93,9 @@ export class Messaging extends React.Component {
       },
       body: JSON.stringify(conversationPayload)
     })
-      .then(this.loadConversations())
+      .then(
+        console.log("I entered the .then"), 
+        this.loadConversations())
   }
 
   onConversationClick(conversationID) {
