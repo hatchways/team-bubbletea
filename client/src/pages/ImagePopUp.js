@@ -38,26 +38,24 @@ export function ImagePopUp(props) {
 
   return (
     <div>
-      <ClickAwayListener onClickAway={props.closePopUp}>
-        <Dialog open={props.imagePopUpDisplayed}>
-          <DialogTitle>
-            <Typography variant="overline">
-              Submitted by: /artistname/
+      <Dialog open={props.imagePopUpDisplayed}>
+        <DialogTitle>
+          <Typography variant="overline">
+            Submitted by: /artistname/
                 </Typography>
-          </DialogTitle>
-          <DialogContent dividers>
-            <img width="100%" height="100%" src={props.imageURL} alt="submission-popup" />
-          </DialogContent>
-          <DialogActions>
-            {!props.winnerDeclared && <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
-              Declare Winner
+        </DialogTitle>
+        <DialogContent dividers>
+          <img width="100%" height="100%" src={props.imageURL} alt="submission-popup" />
+        </DialogContent>
+        <DialogActions>
+          {!props.winnerDeclared && <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
+            Declare Winner
                 </Button>}
-            <Button color="default" onClick={props.closePopUp} >
-              Close
+          <Button color="default" onClick={props.closePopUp} >
+            Close
                 </Button>
-          </DialogActions>
-        </Dialog>
-      </ClickAwayListener>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
