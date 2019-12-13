@@ -35,7 +35,8 @@ export function ImagesGrid(props) {
                 <Image imageClickHandler={props.imageClickHandler}
                   imageURL={submission}
                   submissionID={props.submissionIDs[i]}
-                  imageKey={props.submissionKeys[i]} />
+                  imageKey={props.submissionKeys[i]}
+                  winner={props.winnerID == props.submissionIDs[i] ? true : false} />
                 <GridListTileBar
                   className={classes.tilebar}
                   subtitle={<span>by: artistname</span>}

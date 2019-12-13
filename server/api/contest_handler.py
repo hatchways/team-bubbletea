@@ -1,10 +1,11 @@
 from flask import Blueprint, jsonify, request, redirect, url_for
 from database import db
-from models import Contest
+from models import Contest, User
 from datetime import datetime
 from api.payment_handler import charge_payment
 from sqlalchemy.exc import DataError, IntegrityError
-from utils import handle_database_error
+from utils import handle_database_error, handle_authentication_error, requires_authentication
+import jwt
 
 contest_handler = Blueprint(
     'contest_handler', __name__)
@@ -41,21 +42,22 @@ def show_all():
 
 
 @contest_handler.route('/new')
+@requires_authentication
 def new():
     return jsonify('Show form allowing us to create new contest')
 
 
 @contest_handler.route('', methods=['POST'])
-def create():
-    user_id = 1
-
+@requires_authentication
+def create(authenticated_user_id):
+    parameters = request.get_json()
     try:
-        contest = Contest(title=request.json['title'],
-                          description=request.json['description'],
-                          prize=request.json['prize'],
+        contest = Contest(title=parameters['title'],
+                          description=parameters['description'],
+                          prize=parameters['prize'],
                           deadline=datetime.strptime(
-            request.json['deadline'], "%m/%d/%Y, %H:%M"),
-            user_id=user_id)
+            parameters['deadline'], "%m/%d/%Y, %H:%M:%S"),
+            user_id=authenticated_user_id)
 
         db.session.add(contest)
         db.session.commit()
@@ -79,14 +81,20 @@ def show_contest(id):
 
 
 @contest_handler.route('/<int:id>/edit')
-def edit(id):
+@requires_authentication
+def edit(authenticated_user_id, id):
     contest = Contest.query.get_or_404(id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
     return jsonify('Show form for editing this contest', contest.to_dict())
 
 
 @contest_handler.route('/<int:id>', methods=['PATCH', 'PUT'])
-def update(id):
+@requires_authentication
+def update(authenticated_user_id, id):
     contest = Contest.query.get_or_404(id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         for key in request.json.keys():
@@ -101,8 +109,11 @@ def update(id):
 
 
 @contest_handler.route('/<int:id>', methods=['DELETE'])
-def delete(id):
+@requires_authentication
+def delete(authenticated_user_id, id):
     contest = Contest.query.get_or_404(id)
+    if contest.owner.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         db.session.delete(contest)

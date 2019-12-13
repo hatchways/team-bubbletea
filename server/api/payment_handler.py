@@ -7,7 +7,7 @@ from uuid import uuid4
 import stripe
 import secrets
 from sqlalchemy.exc import DataError, IntegrityError
-from utils import handle_stripe_error, handle_database_error
+from utils import handle_stripe_error, handle_database_error, handle_authentication_error, requires_authentication
 
 stripe.api_key = STRIPE_SECRET_KEY_TEST
 
@@ -15,24 +15,30 @@ payment_handler = Blueprint('payment_handler', __name__)
 
 
 @payment_handler.route('/transfers/info')
-def get_transfer_info(user_id):
+@requires_authentication
+def get_transfer_info(authenticated_user_id, user_id):
+    user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
+
     redirect_uri = f'{REDIRECT_URI_BASE}/oauth'
     Oauth_link = (f'https://connect.stripe.com/express/oauth/authorize?' +
                   f'redirect_uri={redirect_uri}&' +
                   f'client_id={STRIPE_CLIENT_ID_TEST}&' +
-                  f'state={user_id}&' +
+                  f'state={user.id}&' +
                   f'stripe_user[business_type]=individual&' +
                   f'suggested_capabilities[]=transfers')
-
-    user = User.query.get_or_404(user_id)
 
     return jsonify({'Oauth_link': Oauth_link, 'stripe_acct': user.stripe_transfer_id})
 
 
 @payment_handler.route('/cc/info')
-def get_cc_info(user_id):
+@requires_authentication
+def get_cc_info(authenticated_user_id, user_id):
     intent = stripe.SetupIntent.create()
     user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         if user.stripe_customer_id:
@@ -56,8 +62,11 @@ def get_cc_info(user_id):
 
 
 @payment_handler.route('/cc/setup', methods=['POST'])
-def setup_cc_details(user_id):
+@requires_authentication
+def setup_cc_details(authenticated_user_id, user_id):
     user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         customer = stripe.Customer.create(
@@ -73,8 +82,11 @@ def setup_cc_details(user_id):
 
 
 @payment_handler.route('/cc/update', methods=['POST'])
-def update_cc_details(user_id):
+@requires_authentication
+def update_cc_details(authenticated_user_id, user_id):
     user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         payment_methods = stripe.PaymentMethod.list(
@@ -96,8 +108,11 @@ def update_cc_details(user_id):
 
 
 @payment_handler.route('/cc/history')
-def get_payment_history(user_id):
+@requires_authentication
+def get_payment_history(authenticated_user_id, user_id):
     user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
 
     try:
         payment_intents = stripe.PaymentIntent.list(
@@ -114,8 +129,12 @@ def get_payment_history(user_id):
 
 
 @payment_handler.route('/transfers/history')
-def get_transfer_history(user_id):
+@requires_authentication
+def get_transfer_history(authenticated_user_id, user_id):
     user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
+
     try:
         transfers = stripe.Transfer.list(
             destination=user.stripe_transfer_id)
@@ -131,7 +150,11 @@ def get_transfer_history(user_id):
 
 
 @payment_handler.route('/cc/refund', methods=['POST'])
-def refund_owner(user_id):
+@requires_authentication
+def refund_owner(authenticated_user_id, user_id):
+    user = User.query.get_or_404(user_id)
+    if user.id != authenticated_user_id:
+        return handle_authentication_error(user_specific=True)
     try:
         payment_intent = stripe.PaymentIntent.retrieve(
             str(request.json['payment_intent_id']))

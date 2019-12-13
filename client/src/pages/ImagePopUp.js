@@ -33,6 +33,7 @@ export function ImagePopUp(props) {
     })();
 
     props.closePopUp();
+    props.openWinnerMsg();
   }
 
   return (
@@ -48,9 +49,9 @@ export function ImagePopUp(props) {
             <img width="100%" height="100%" src={props.imageURL} alt="submission-popup" />
           </DialogContent>
           <DialogActions>
-            <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
+            {!props.winnerDeclared && <Button color="default" className={classes.winnerButton} onClick={declareWinner}>
               Declare Winner
-                </Button>
+                </Button>}
             <Button color="default" onClick={props.closePopUp} >
               Close
                 </Button>
