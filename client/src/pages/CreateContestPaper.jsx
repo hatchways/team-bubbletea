@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Typography } from '@material-ui/core';
 import { format } from 'date-fns';
@@ -28,6 +29,8 @@ export function CreateContestPaper(props) {
   const [description, setDescription] = useState("");
   const [prizeAmount, setPrizeAmount] = useState(100.00);
   const [deadline, setDeadline] = useState(new Date());
+  const [redirect, setRedirect] = useState(false);
+  // const [selected, setSelected] = useState("");
 
   const handleCreateContest = (e) => {
     fetch('http://localhost:5000/contests', { // POST request to backend
@@ -44,10 +47,18 @@ export function CreateContestPaper(props) {
         'jwtoken': localStorage.getItem('token')
       })
     })
+    .then(res => res.json())
+    .then(res => {
+      if (res.error === "") {
+        console.log("ok");
+        setRedirect(true);
+      }
+    })
   }
 
   return (
     <>
+      {redirect && <Redirect to='/view-contest'/>}
       <Typography align="center" variant="h4" className={classes.header}>
         Create new contest
 		  </Typography>
