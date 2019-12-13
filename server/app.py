@@ -12,7 +12,7 @@ from api.message_handler import message_handler
 from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
 from database import db, bcrypt 
 from web_socket import socketio
-from models import User 
+from models import User, Conversation
 import jwt
 import json
 import datetime
@@ -105,10 +105,19 @@ def handle_incoming_message(json, methods=['GET', 'POST']):
     socketio.emit('ack', json)
     # socketio.emit('incoming response', json)
 
-@socketio.on('join room')
-def join_conversation_room(conversation_id): 
-    join_room(conversation_id)
-    send('User has joined the room') 
+# @socketio.on('join room')
+# def join_conversation_room(conversation_id): 
+#     join_room(conversation_id)
+#     send('User has joined the room') 
+
+@socketio.on('join all rooms')
+def join_all_conversation_rooms(jwtoken_dict): 
+    encoded_token = jwtoken_dict['jwtoken']
+    decoded_token = jwt.decode(encoded_token, 'secret', algorithm='HS256')
+    user = User.query.get_or_404(decoded_token['sub'])
+    conversations = Conversation.query.filter(Conversation.users.contains(user))
+    for conversation in conversations: 
+        join_room(conversation.id)
 
 
 if __name__ == '__main__':

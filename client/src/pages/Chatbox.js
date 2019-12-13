@@ -22,10 +22,16 @@ const styles = theme => ({
     paddingTop: theme.spacing(1), 
     paddingBottom: theme.spacing(1)
   }, 
-  messageCard: {
+  messageFromUserCard: {
     height: 50, 
-    borderRadius: 25
+    borderRadius: 25, 
+    boxShadow: "0px 1px 5px 0px rgba(209, 209, 209, 0.9)"
   }, 
+  messageToUserCard: {
+    height: 10, 
+    borderRadius: 25, 
+    boxShadow: "0px 1px 5px 0px rgba(209, 209, 209, 0.9)", 
+  },
   messageText: {
     marginBottom: theme.spacing(10)
   }
@@ -57,12 +63,12 @@ class Chatbox extends React.Component {
         <Grid container className={classes.messagesContainer}>
           {this.props.messages.map(convMessage => {
             return (
-              <Grid container direction="row" spacing={1} alignItems="center" className={classes.messages}>
-                <Grid item alignContent="center">
+              <Grid key={convMessage.message_id} container direction="row" spacing={1} alignItems="center" className={classes.messages}>
+                <Grid item>
                   <Avatar className={classes.avatar} />
                 </Grid>
-                <Grid item alignContent="center" justify="center">
-                  <Card className={classes.messageCard}>
+                <Grid item>
+                  <Card className={classes.messageFromUserCard}>
                     <CardContent>
                       <Typography adisplay="inline" variant="subtitle2" className={classes.messageText}>
                         <div key={convMessage.message_id}>

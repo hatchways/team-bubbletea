@@ -13,7 +13,8 @@ export class Messaging extends React.Component {
       viewUsers: false,
       conversations: [],
       conversationClickedID: null,
-      messages: []
+      messages: [], 
+      unreadConversations: {}
     };
     this.socket = openSocket('http://localhost:5000');
     this.viewAvailableUsers = this.viewAvailableUsers.bind(this)
@@ -24,6 +25,7 @@ export class Messaging extends React.Component {
   }
 
   componentDidMount() {
+    this.socket.emit('join all rooms', { 'jwtoken': localStorage.getItem('token') })
     fetch('/users/show', {
       method: 'POST',
       headers: {
@@ -45,6 +47,12 @@ export class Messaging extends React.Component {
           let previousMessages = JSON.parse(JSON.stringify(previousState.messages))
           previousMessages.push(incomingMessage)
           return { messages: previousMessages }
+        })
+      } else {
+        this.setState(previousState => {
+          let prevUnreadConversations = {...previousState.unreadConversations}
+            prevUnreadConversations[incomingMessage.conversation_id] = true 
+            return { unreadConversations: prevUnreadConversations }
         })
       }
     })
@@ -97,7 +105,12 @@ export class Messaging extends React.Component {
         console.log(error)
       })
     this.setState({ conversationClickedID: conversationID })
-    this.socket.emit('join room', conversationID)
+    this.setState(previousState => {
+      let prevUnreadConversations = {...previousState.unreadConversations}
+        prevUnreadConversations[conversationID] = false 
+        return { unreadConversations: prevUnreadConversations }
+    }) 
+    // this.socket.emit('join room', conversationID)
   }
 
   onMessageSent(messageText) {
@@ -137,6 +150,7 @@ export class Messaging extends React.Component {
           />}
         <ConversationsList
           userLoggedIn={this.state.users.user_logged_in}
+          unreadConversations={this.state.unreadConversations}
           viewAvailableUsers={this.viewAvailableUsers}
           conversations={this.state.conversations}
           onConversationClick={this.onConversationClick}

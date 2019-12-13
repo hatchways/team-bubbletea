@@ -31,6 +31,10 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     marginTop: theme.spacing(2)
   },
+  unreadTitle: {
+    fontWeight: "bold", 
+    fontStyle: "italic"
+  },
   toolBar: theme.mixins.toolbar,
 }))
 
@@ -60,7 +64,7 @@ export function ConversationsList(props) {
         </Grid>
         <List>
           {props.conversations.map((conversation) => (
-            <Fragment>
+            <Fragment key={conversation.conversation_id}>
               <ListItem button onClick={() => props.onConversationClick(conversation.conversation_id)}
                 key={conversation.conversation_id}>
                 <ListItemAvatar>
@@ -69,7 +73,7 @@ export function ConversationsList(props) {
                 <ListItemText
                   disableTypography
                   primary={
-                    <Typography variant="subtitle2">
+                    <Typography variant="subtitle2" className={ props.unreadConversations[conversation.conversation_id] ? classes.unreadTitle : null}>
                       {conversation.users.map((user) => user.user_id !== props.userLoggedIn.user_id ? user.first_name + ' ' + user.last_name : null)}
                     </Typography>}
                 />
