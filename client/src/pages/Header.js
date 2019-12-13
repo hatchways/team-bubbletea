@@ -11,8 +11,7 @@ const useStyles = makeStyles(theme => ({
   },
   AppBar: {
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor: "black",
-    padding: "15px 0"
+    backgroundColor: "black"
   }
 }));
 
@@ -21,7 +20,7 @@ export function Header(props) {
 
   return (
     <div>
-      <AppBar position="static" className={classes.AppBar}>
+      <AppBar position="fixed" className={classes.AppBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
             TATTOO ART

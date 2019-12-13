@@ -20,8 +20,8 @@ def signup():
         result = "Password must have a minimum of 6 characters!"
         return jsonify(result=result)
 
-    new_user = User(email=user['email'],
-                    password=user['password'])
+    new_user = User(email=user['email'])
+    new_user.password = user['password'] 
     
     try:
         db.session.add(new_user)

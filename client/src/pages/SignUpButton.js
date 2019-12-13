@@ -4,15 +4,14 @@ import { Button, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(1)
+    
   },
   input: {
     display: 'none',
   },
   title: {
     fontFamily: theme.fontFamily,
-    fontSize: 10,
-    padding: 5
+    fontSize: 10
   }
 }));
 
