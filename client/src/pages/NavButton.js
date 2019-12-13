@@ -12,13 +12,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function NavButton({ buttonName }) {
+export function NavButton(props) {
   const classes = useStyles();
 
   return (
-    <Button color="inherit" className={classes.button}>
+    <Button color="inherit" className={classes.button} onClick={ () => props.redirect(props.buttonName)}>
       <Typography className={classes.title} variant="button">
-        {buttonName}
+        {props.buttonName}
       </Typography>
     </Button>
   );

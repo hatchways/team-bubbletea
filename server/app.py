@@ -11,7 +11,7 @@ from api.user_handler import user_handler
 from api.conversation_handler import conversation_handler
 from api.message_handler import message_handler
 from api.oauth_handler import oauth_handler
-from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME
+from config import POSTGRES_DATABASE, POSTGRES_PASSWORD, POSTGRES_URL, POSTGRES_USERNAME, S3_BUCKET, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_BUCKET_REGION
 from database import db, bcrypt 
 from web_socket import socketio
 from models import User, Conversation

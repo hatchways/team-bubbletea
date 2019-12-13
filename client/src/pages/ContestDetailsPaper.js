@@ -6,6 +6,7 @@ import { BackToContestsListButton } from "./BackToContestsListsButton";
 const useStyles = makeStyles(theme => ({
   root: {
     boxShadow: null,
+    marginTop: theme.spacing(8),
     paddingBottom: theme.spacing(1), 
     paddingLeft: theme.spacing(15)
   }
