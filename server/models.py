@@ -4,9 +4,12 @@ from datetime import timedelta, datetime
 
 
 user_conversation_table = db.Table('user_conversation', db.Model.metadata,
-    db.Column('conversation_id', db.Integer, db.ForeignKey('conversation.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
-)
+                                   db.Column('conversation_id', db.Integer,
+                                             db.ForeignKey('conversation.id')),
+                                   db.Column('user_id', db.Integer,
+                                             db.ForeignKey('user.id'))
+                                   )
+
 
 class Message(db.Model):
     __tablename__ = 'message'
@@ -17,20 +20,21 @@ class Message(db.Model):
         db.DateTime, nullable=False, default=datetime.utcnow)
     date_sent = db.Column(
         db.DateTime, nullable=False, default=datetime.utcnow)
-    message_text =  db.Column(db.String, nullable=False)
-    from_user_id = db.Column(db.Integer, db.ForeignKey('user.id')) 
+    message_text = db.Column(db.String, nullable=False)
+    from_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     to_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     from_user = db.relationship('User', foreign_keys=[from_user_id])
     to_user = db.relationship('User', foreign_keys=[to_user_id])
 
     def to_dict(self):
-        return {'message_id' : self.id, 
+        return {'message_id': self.id,
                 'conversation_id': self.conversation_id,
-                'date_created': self.date_created.strftime("%d/%m/%Y, %H:%M:%S"), 
-                'date_sent': self.date_sent.strftime("%d/%m/%Y, %H:%M:%S"), 
-                'message_text': self.message_text, 
-                'from_user': self.from_user.to_dict(), 
+                'date_created': self.date_created.strftime("%d/%m/%Y, %H:%M:%S"),
+                'date_sent': self.date_sent.strftime("%d/%m/%Y, %H:%M:%S"),
+                'message_text': self.message_text,
+                'from_user': self.from_user.to_dict(),
                 'to_user': self.to_user.to_dict()}
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -44,10 +48,12 @@ class User(db.Model):
     submissions = db.relationship('Submission', backref='artist', lazy=True)
     stripe_transfer_id = db.Column(db.String)
     stripe_customer_id = db.Column(db.String)
-    conversations = db.relationship('Conversation', secondary=user_conversation_table, back_populates="users")
-    messages_to_user = db.relationship('Message', foreign_keys=[Message.to_user_id])
-    messages_from_user = db.relationship('Message', foreign_keys=[Message.from_user_id])
-
+    conversations = db.relationship(
+        'Conversation', secondary=user_conversation_table, back_populates="users")
+    messages_to_user = db.relationship(
+        'Message', foreign_keys=[Message.to_user_id])
+    messages_from_user = db.relationship(
+        'Message', foreign_keys=[Message.from_user_id])
 
     @property
     def password(self):
@@ -55,32 +61,35 @@ class User(db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8') 
+        self.password_hash = bcrypt.generate_password_hash(
+            password).decode('utf-8')
 
     def check_password(self, password_to_check):
         return bcrypt.check_password_hash(self.password_hash, password_to_check)
-        
+
     def __repr__(self):
         return f'User number {self.id}'
 
     def to_dict(self):
-        return {'user_id' : self.id, 
-                'first_name' : self.first_name,
-                'last_name' : self.last_name}
+        return {'user_id': self.id,
+                'first_name': self.first_name,
+                'last_name': self.last_name}
 
 
 class Conversation(db.Model):
     __tablename__ = 'conversation'
 
     id = db.Column(db.Integer, primary_key=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    users = db.relationship('User', secondary=user_conversation_table, back_populates="conversations") 
+    date_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    users = db.relationship(
+        'User', secondary=user_conversation_table, back_populates="conversations")
     messages = db.relationship('Message')
 
     def to_dict(self):
         return {
-            'conversation_id': self.id, 
-            'date_created': self.date_created, 
+            'conversation_id': self.id,
+            'date_created': self.date_created,
             'users': [user.to_dict() for user in self.users]
         }
 

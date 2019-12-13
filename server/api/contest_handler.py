@@ -20,10 +20,12 @@ def show_all():
     # Retrieve all contests for specific user
     if user_id != None:
         if completed == "True":
-            contests = Contest.query.filter(Contest.deadline <= current_time).filter_by(user_id=user_id).all()
+            contests = Contest.query.filter(
+                Contest.deadline <= current_time).filter_by(user_id=user_id).all()
             return jsonify([contest.to_dict() for contest in contests])
         elif completed == "False":
-            contests = Contest.query.filter(Contest.deadline > current_time).filter_by(user_id=user_id).all()
+            contests = Contest.query.filter(
+                Contest.deadline > current_time).filter_by(user_id=user_id).all()
             return jsonify([contest.to_dict() for contest in contests])
 
         contests = Contest.query.filter_by(user_id=user_id)
@@ -56,7 +58,7 @@ def create(authenticated_user_id):
                           description=parameters['description'],
                           prize=parameters['prize'],
                           deadline=datetime.strptime(
-            parameters['deadline'], "%m/%d/%Y, %H:%M:%S"),
+            parameters['deadline'], "%m/%d/%Y, %H:%M"),
             user_id=authenticated_user_id)
 
         db.session.add(contest)

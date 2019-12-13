@@ -23,7 +23,7 @@ s3 = boto3.client(
 )
 
 
-@submission_handler.route('/')
+@submission_handler.route('/', methods=['GET', 'POST'])
 @requires_authentication
 def show_all(authenticated_user_id, contest_id):
     contest = Contest.query.get_or_404(contest_id)

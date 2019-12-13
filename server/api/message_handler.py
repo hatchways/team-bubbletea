@@ -30,7 +30,4 @@ def create():
             return jsonify({ "success": True })
     return jsonify({ "error": "This user is not allowed to modify the conversation."})
 
-    
-# { 'jwtoken': '', 
-#   'conversation_id': int, 
-#   'message_text': str }
+

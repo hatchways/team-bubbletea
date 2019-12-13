@@ -29,7 +29,7 @@ function App() {
             <Route path="/signup" component={Signup} />
             <Route path="/payments-demo" component={Payments} />
             <Route path="/upload-submission" component={UploadSubmission} />
-            <Route path="/view-submissions" component={ViewSubmissions} />
+            <Route path="/view-submissions/:contestID" component={ViewSubmissions} />
             <Route path="/view-contest" component={ViewContest} />
             <Route path="/create-contest" component={CreateContest} />
             <Route path="/profile" component={Profile} />
