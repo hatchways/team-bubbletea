@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Typography, Button, ButtonGroup } from '@material-ui/core';
 import ProfileSubmission from "./ProfileSubmission";
@@ -34,35 +34,46 @@ const useStyles = makeStyles(theme => ({
 
 export function ProfilePaper() {
   const classes = useStyles();
+  const [data, setData] = useState([]);
+  const [tab, setTab] = useState(0);
+
+  const fetchData = async (completed) => {
+    const res = await fetch("http://localhost:5000/contests?completed=" + completed + "&user_id=1");
+    const json = await res.json();
+    setData(json)
+  }
+
+  useEffect(() => {
+    fetchData("False");
+    }, []
+  )
 
   return (
     <Fragment>
       <Grid container justify="center" alignItems="center" className={classes.container}>
         <Grid item xs={12}>
           <ButtonGroup fullWidth>
-            <Button variant="text" className={classes.buttonSelected}>IN PROGRESS</Button>
-            <Button variant="text" className={classes.buttonUnselected}>COMPLETED</Button>
+            <Button
+              variant="text"
+              className={(tab === 0) ? classes.buttonSelected : classes.buttonUnselected}
+              onClick={() => {fetchData("False"); setTab(0)}}
+            >IN PROGRESS</Button>
+            <Button
+              variant="text"
+              className={(tab === 1) ? classes.buttonSelected : classes.buttonUnselected}
+              onClick={() => {fetchData("True"); setTab(1)}}
+            >COMPLETED</Button>
           </ButtonGroup>
         </Grid>
         <Paper className={classes.paper}>
-          <ProfileSubmission
-            image="https://i.imgur.com/pH1nHQ6.png"
-            title="Submission 1"
-            description="Description for submission 1"
-            prizeAmount="150"
-          />
-          <ProfileSubmission
-            image="https://i.imgur.com/2WKG2CK.png"
-            title="Submission 2"
-            description="Description for submission 2"
-            prizeAmount="100"
-          />
-          <ProfileSubmission
-            image="https://i.imgur.com/P2YNXcE.png"
-            title="Submission 3"
-            description="Description for submission 3"
-            prizeAmount="200"
-          />
+          {data.map(contest => (
+            <ProfileSubmission
+              image={contest.image}
+              title={contest.title}
+              description={contest.description}
+              prizeAmount={contest.prize}
+            />
+          ))}
         </Paper>
       </Grid>
     </Fragment>
