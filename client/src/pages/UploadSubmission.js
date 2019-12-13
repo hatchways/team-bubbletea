@@ -37,6 +37,7 @@ export class UploadSubmission extends React.Component {
             e.preventDefault();
             const formData = new FormData();
             formData.append('file', this.state.files[0]);
+            console.log(formData);
             fetch(`/contests/${this.state.contestID}/submissions/upload`, {
                 method: 'POST',
                 body: formData

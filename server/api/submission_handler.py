@@ -53,8 +53,8 @@ def show_all(authenticated_user_id, contest_id):
 
 
 @submission_handler.route('/upload', methods=['POST'])
-@requires_authentication
-def upload(authenticated_user_id, contest_id):
+# @requires_authentication
+def upload(contest_id):
     file = request.files['file']
 
     try:
@@ -64,7 +64,7 @@ def upload(authenticated_user_id, contest_id):
         my_bucket.Object(file_key).put(Body=file)
 
         submission = Submission(
-            user_id=authenticated_user_id, contest_id=contest_id, image=file_key)
+            user_id=3, contest_id=contest_id, image=file_key)
 
         db.session.add(submission)
         db.session.commit()
