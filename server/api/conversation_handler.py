@@ -14,8 +14,8 @@ def new():
   user_one = User.query.get_or_404(conversation_parameters['user_id'])
   token = jwt.decode(conversation_parameters['jwtoken'], 'secret', algorithm='HS256')
   user_two = User.query.get_or_404(token['sub']) 
-  filtered_conversations = Conversation.query.filter(users=[user_one, user_two])
-  if len(filtered_conversations) == 0:
+  filtered_conversations = Conversation.query.filter(Conversation.users.contains(user_one), Conversation.users.contains(user_two))
+  if filtered_conversations.count() == 0:
     conversation = Conversation(users=[user_one, user_two])
     db.session.add(conversation)
     db.session.commit()
