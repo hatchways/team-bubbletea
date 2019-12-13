@@ -3,13 +3,16 @@ import { makeStyles, TextField, Typography, Grid } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: 5,
-    marginBottom: 5,
-    width: 300,
+		marginTop: theme.spacing(1),
+		marginBottom: theme.spacing(3),
+		"& fieldset": {
+			borderRadius: 0,
+		},
+    width: 350,
   },
   caption: {
     color: theme.default,
-  }
+  },
 }));
 
 export function BasicTextField(props) {
@@ -29,6 +32,7 @@ export function BasicTextField(props) {
           variant="outlined"
           onChange={props.onChange}
           value={props.value}
+          placeholder={props.placeholder}
         />
       </Grid>
     </Fragment>

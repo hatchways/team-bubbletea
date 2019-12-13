@@ -26,7 +26,7 @@ export function CreateContestButton(props) {
           <Button type={props.type} className={classes.button} variant="contained" onClick={props.onClick}>
             <Typography className={classes.root}>
               Create Contest
-      		</Typography>
+      		  </Typography>
           </Button>
         </div>
       </Grid>

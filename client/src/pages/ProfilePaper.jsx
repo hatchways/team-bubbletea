@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     padding: "60px",
     boxShadow:
-      "-5px -5px 10px 3px rgba(209, 209, 209, 0.15), 5px 5px 10px 3px rgba(209, 209, 209, 0.15)"
+      "-5px -5px 10px 3px rgba(209, 209, 209, 0.15), 5px 5px 10px 3px rgba(209, 209, 209, 0.15)",
+    borderRadius: "0px"
   },
   header: {
     fontWeight: 600,

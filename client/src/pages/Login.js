@@ -70,7 +70,7 @@ class Login extends Component {
           <Grid container direction="column" alignContent="center">
             <form onSubmit={this.handleFormSubmit}>
               <BasicTextField
-                label="Email Address"
+                label="E-mail"
                 value={this.state.email}
                 onChange={e => this.handleEmailChange(e.target.value)}
               />

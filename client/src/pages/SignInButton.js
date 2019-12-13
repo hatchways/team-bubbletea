@@ -6,14 +6,15 @@ const useStyles = makeStyles(theme => ({
     fontFamily: theme.fontFamily,
   },
   button: {
-    backgroundColor: theme.secondary,
+    backgroundColor: "black",
     color: theme.bgcolor,
-    borderRadius: 0,
+    borderRadius: "0",
+    padding: theme.spacing(2, 8),
   },
   buttonContainer: {
-    width: 125,
-    marginLeft: theme.spacing(11),
-    marginTop: theme.spacing(3)
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginTop: theme.spacing(6)
   }
 }));
 
@@ -22,12 +23,12 @@ export function SignInButton(props) {
 
   return (
     <div>
-      <Grid item>
+      <Grid container justify="center">
         <div className={classes.buttonContainer}>
-          <Button type={props.type} fullWidth className={classes.button} variant="contained">
+          <Button type={props.type} className={classes.button} variant="contained">
             <Typography className={classes.root}>
               Sign In
-      		</Typography>
+      		  </Typography>
           </Button>
         </div>
       </Grid>

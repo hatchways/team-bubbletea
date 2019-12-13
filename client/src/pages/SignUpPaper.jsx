@@ -5,7 +5,6 @@ import { Paper, Grid, Typography } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(6),
-    // paddingBottom: theme.spacing(3),
     boxShadow:
       "-5px -5px 10px 3px rgba(209, 209, 209, 0.15), 5px 5px 10px 3px rgba(209, 209, 209, 0.15)",
     borderRadius: "0px"
@@ -23,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function SignInPaper(props) {
+export function SignUpPaper(props) {
   const classes = useStyles();
 
   return (
@@ -32,7 +31,7 @@ export function SignInPaper(props) {
         <Paper className={classes.paper}>
           <Grid item className={classes.header}>
             <Typography variant="h4" className={classes.signInText} align="center">
-              Sign In
+              Sign Up
             </Typography>
           </Grid>
           {props.children}
