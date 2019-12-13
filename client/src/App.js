@@ -13,6 +13,7 @@ import Signup from "./pages/Signup";
 import { UploadSubmission } from './pages/UploadSubmission';
 import { ViewSubmissions } from './pages/ViewSubmissions';
 import { ViewContest } from './pages/ViewContest';
+import { Messaging } from "./pages/Messaging";
 import Profile from './pages/Profile';
 
 import "./App.css";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/view-contest" component={ViewContest} />
             <Route path="/create-contest" component={CreateContest} />
             <Route path="/profile" component={Profile} />
+            <Route path="/messages" component={Messaging} />
           </Switch>
         </BrowserRouter>
       </MuiThemeProvider>

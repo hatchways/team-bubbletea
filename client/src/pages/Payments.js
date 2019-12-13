@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import InjectedCreditCard from "./CreditCard";
 import History from "./History";
@@ -9,7 +9,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Grid, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
 
 const useStyles = makeStyles(theme => ({
     root: {
