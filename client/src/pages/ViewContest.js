@@ -41,8 +41,9 @@ export function ViewContest() {
     const [tab, setTab] = useState(0);
 
     const fetchData = async (completed) => {
-        const res = await fetch("/contests");
+        const res = await fetch("/contests?completed=" + completed);
         const json = await res.json();
+        setData([]);
         setData(json)
     }
 
