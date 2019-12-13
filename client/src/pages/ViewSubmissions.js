@@ -5,7 +5,7 @@ import { ImageDisplayPaper } from "./ImageDisplayPaper";
 import { ImagePopUp } from "./ImagePopUp";
 import { NavButton } from "./NavButton";
 import WinnerSnackbar from './WinnerSnackbar';
-import { Redirect } from 'react-router-dom'; 
+import { Redirect } from 'react-router-dom';
 
 export class ViewSubmissions extends React.Component {
   constructor(props) {
@@ -19,9 +19,9 @@ export class ViewSubmissions extends React.Component {
       displayedSubmissionID: null,
       contestID: props.match.params.contestID,
       winnerID: null,
-      winnerMsg: false, 
-      redirectMessage: false, 
-      redirectDiscover: false, 
+      winnerMsg: false,
+      redirectMessage: false,
+      redirectDiscover: false,
       redirectAccount: false
     };
     this.viewAllSubmissions = this.viewAllSubmissions.bind(this)
@@ -57,6 +57,7 @@ export class ViewSubmissions extends React.Component {
 
   displayImagePopUp(imageURL, submissionID) {
     this.setState({ imagePopUpDisplayed: true, displayedImageURL: imageURL, displayedSubmissionID: submissionID })
+    console.log(this.state.imagePopUpDisplayed)
   }
 
   closeImagePopUp() {
@@ -72,7 +73,7 @@ export class ViewSubmissions extends React.Component {
   }
 
   redirectToNewPage(buttonName) {
-    if(buttonName === "Messages") {
+    if (buttonName === "Messages") {
       this.setState({ redirectMessage: true })
     } else if (buttonName === "Discover") {
       this.setState({ redirectDiscover: true })
@@ -107,9 +108,9 @@ export class ViewSubmissions extends React.Component {
           openWinnerMsg={this.openWinnerMsg}
         />
         <WinnerSnackbar closeWinnerMsg={this.closeWinnerMsg} winnerMsg={this.state.winnerMsg} />
-        {this.state.redirectMessage && <Redirect to='/messages'/>}
-        {this.state.redirectDiscover && <Redirect to='/'/>}
-        {this.state.redirectAccount && <Redirect to='/profile'/>}
+        {this.state.redirectMessage && <Redirect to='/messages' />}
+        {this.state.redirectDiscover && <Redirect to='/' />}
+        {this.state.redirectAccount && <Redirect to='/profile' />}
       </div>
     )
   }
