@@ -40,7 +40,8 @@ export function CreateContestPaper(props) {
         "title": title,
         "description": description,
         "prize": prizeAmount,
-        "deadline": format(deadline, 'MM/dd/yyyy, HH:mm')
+        "deadline": format(deadline, 'MM/dd/yyyy, HH:mm'),
+        'jwtoken': localStorage.getItem('token')
       })
     })
   }

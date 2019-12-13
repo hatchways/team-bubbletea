@@ -129,7 +129,7 @@ class Contest(db.Model):
 
     @validates('prize')
     def validate_prize(self, key, prize):
-        assert (prize >= 0), "Nice try. This isn't a charity."
+        assert (float(prize) >= 0), "Nice try. This isn't a charity."
         return prize
 
 
