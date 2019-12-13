@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Typography, Button, ButtonGroup } from '@material-ui/core';
 import ProfileSubmission from "./ProfileSubmission";
+import ContestSubmission from "./ContestSubmission";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -70,7 +71,7 @@ export function ViewContest() {
                 </Grid>
                 <Paper className={classes.paper}>
                     {data.map(contest => (
-                        <ProfileSubmission
+                        <ContestSubmission
                             image={contest.image}
                             title={contest.title}
                             description={contest.description}
