@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import DateFnsUtils from '@date-io/date-fns';
 
 import { theme } from "./themes/theme";
-import LandingPage from "./pages/Landing";
+import HomePage from "./pages/HomePage";
 import Payments from "./pages/Payments";
 import Login from "./pages/Login";
 import CreateContest from "./pages/CreateContest";
@@ -24,7 +24,7 @@ function App() {
       <MuiThemeProvider theme={theme}>
         <BrowserRouter>
           <Switch>
-            <Route exact path="/" component={LandingPage} />
+            <Route exact path="/" component={HomePage} />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
             <Route path="/payments-demo" component={Payments} />
