@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
   },
   subHeading: {
     fontWeight: 600,
-    marginBottom: 30
+    marginBottom: 30,
+    marginTop: 30
   }
 }));
 
@@ -62,7 +63,8 @@ export function HomePagePaper() {
 
   return (
     <Fragment>
-      <Grid container justify="center" alignItems="center" className={classes.container}>
+      <Grid container className={classes.container}>
+        <Typography className={classes.subHeading} variant="h4">...or view existing contests</Typography>
         <Paper className={classes.paper}>
           <Typography variant="h5" className={classes.subHeading}>Currently running</Typography>
           <Grid container>
